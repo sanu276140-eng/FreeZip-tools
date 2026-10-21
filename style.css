@@ -1,0 +1,89 @@
+html {
+  scroll-behavior: smooth;
+}
+
+/* Minimal clean scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+
+/* Sketch wireframe structured frame */
+.wireframe-container {
+  border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+  border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+}
+.dark .wireframe-container {
+  border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+  border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+}
+
+/* Sketch capsule tool button physics */
+.capsule-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+}
+.dark .capsule-btn {
+  border: 1.5px solid rgba(51, 65, 85, 0.7);
+}
+
+/* Shine sweep effect on hover */
+.capsule-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+.capsule-btn:hover::before {
+  left: 140%;
+}
+
+/* Button hover elevation with individual dynamic color glow */
+.capsule-btn:hover {
+  transform: translateY(-3px);
+  border-color: var(--tool-color);
+  box-shadow: 0 10px 22px -6px var(--tool-glow, rgba(0, 0, 0, 0.12));
+}
+.capsule-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Category box header styling from sketch */
+.category-box-header {
+  border: 1.5px solid rgba(148, 163, 184, 0.6);
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+.dark .category-box-header {
+  border: 1.5px solid rgba(71, 85, 105, 0.8);
+}
+
+/* Prominent Big Button Glow & Pulse */
+.big-zip-hero-btn {
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 18px -4px rgba(239, 68, 68, 0.22);
+}
+.big-zip-hero-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -4px rgba(239, 68, 68, 0.35);
+}
+.big-zip-hero-btn:active {
+  transform: translateY(0);
+}
