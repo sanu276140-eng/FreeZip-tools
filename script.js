@@ -7,13 +7,13 @@ const CATEGORIES_DATA = [
     badge: "Pdf",
     tools: [
       { name: "Merge PDF", color: "#E11D48", icon: "fa-solid fa-object-group", url: "tools/freezip_tools_merge_pdf.html" },
-      { name: "Split PDF", color: "#EF4444", icon: "fa-solid fa-scissors" },
+      { name: "Split PDF", color: "#EF4444", icon: "fa-solid fa-scissors", url: "tools/freezip_tools_merge_pdf.html" },
       { name: "Compress PDF", color: "#F43F5E", icon: "fa-solid fa-file-zipper", url: "" },
-      { name: "PDF to Word", color: "#FB7185", icon: "fa-solid fa-file-word" },
-      { name: "Word to PDF", color: "#EA580C", icon: "fa-solid fa-file-lines" },
-      { name: "PDF to Image", color: "#F97316", icon: "fa-solid fa-file-image" },
-      { name: "Protect PDF", color: "#FB923C", icon: "fa-solid fa-lock" },
-      { name: "Sign PDF", color: "#D97706", icon: "fa-solid fa-signature" }
+      { name: "PDF to Word", color: "#FB7185", icon: "fa-solid fa-file-word", url: "tools/freezip_tools_merge_pdf.html" },
+      { name: "Word to PDF", color: "#EA580C", icon: "fa-solid fa-file-lines", url: "tools/freezip_tools_merge_pdf.html" },
+      { name: "PDF to Image", color: "#F97316", icon: "fa-solid fa-file-image", url: "tools/freezip_tools_merge_pdf.html" },
+      { name: "Protect PDF", color: "#FB923C", icon: "fa-solid fa-lock", url: "tools/freezip_tools_merge_pdf.html" },
+      { name: "Sign PDF", color: "#D97706", icon: "fa-solid fa-signature",  }
     ]
   },
   {
@@ -170,7 +170,7 @@ function renderStructure() {
 
               return `
                 <button 
-                  onclick="handleToolClick('${tool.name}', '${tool.color}')"
+                  onclick="handleToolClick('${tool.name}', '${tool.color}', '${tool.url || ""}')"
                   style="--tool-color: ${tool.color}; --tool-glow: ${glow};"
                   class="capsule-btn group flex items-center justify-between px-3.5 py-2.5 rounded-full bg-white dark:bg-[#111827] text-slate-800 dark:text-slate-100 cursor-pointer text-left select-none"
                   title="${tool.name}"
@@ -238,20 +238,13 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function handleToolClick(toolName, color) {
-  const toast = document.getElementById('toastNotification');
-  const toastMsg = document.getElementById('toastMessage');
-  const toastPill = document.getElementById('toastColorPill');
+function handleToolClick(toolName, color, url) {
+  if (!url) {
+    alert(`${toolName} page is not available yet!`);
+    return;
+  }
 
-  toastPill.style.backgroundColor = color;
-  toastMsg.innerText = `Launched: ${toolName}`;
-
-  toast.classList.remove('translate-y-12', 'opacity-0');
-
-  clearTimeout(window._toastTimeout);
-  window._toastTimeout = setTimeout(() => {
-    toast.classList.add('translate-y-12', 'opacity-0');
-  }, 2000);
+  window.location.href = url;
 }
 
 function openModal(modalId) {
