@@ -6,9 +6,9 @@ const CATEGORIES_DATA = [
     title: "PDF & Document Tools",
     badge: "Pdf",
     tools: [
-      { name: "Merge PDF", color: "#E11D48", icon: "fa-solid fa-object-group" },
+      { name: "Merge PDF", color: "#E11D48", icon: "fa-solid fa-object-group", url: "tools/freezip_tools_merge_pdf.html" },
       { name: "Split PDF", color: "#EF4444", icon: "fa-solid fa-scissors" },
-      { name: "Compress PDF", color: "#F43F5E", icon: "fa-solid fa-file-zipper" },
+      { name: "Compress PDF", color: "#F43F5E", icon: "fa-solid fa-file-zipper", url: "" },
       { name: "PDF to Word", color: "#FB7185", icon: "fa-solid fa-file-word" },
       { name: "Word to PDF", color: "#EA580C", icon: "fa-solid fa-file-lines" },
       { name: "PDF to Image", color: "#F97316", icon: "fa-solid fa-file-image" },

@@ -1,0 +1,277 @@
+<!-- ... existing code ... -->
+  <title>Merge PDF — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- PDF-Lib for 100% In-Browser PDF Merging -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .wireframe-container {
+      border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+      border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+    }
+    .dark .wireframe-container {
+      border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+      border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+    }
+  </style>
+</head>
+
+<body class="bg-slate-100/70 dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 antialiased flex flex-col">
+
+  <!-- OUTER MARGIN WRAPPER -->
+  <div class="w-full max-w-[1040px] mx-auto px-3 sm:px-6 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between shadow-sm">
+
+      <!-- MINIMAL HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-5 py-3.5 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+          <span class="w-7 h-7 rounded-lg bg-[#E11D48] text-white flex items-center justify-center text-xs">
+            <i class="fa-solid fa-file-zipper"></i>
+          </span>
+          <span class="text-sm font-extrabold uppercase tracking-wide">
+            FreeZip<span class="text-[#E11D48]">-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-3">
+          <a href="index.html" class="text-xs font-medium text-slate-500 hover:text-[#E11D48] transition-colors">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Home
+          </a>
+          <button onclick="toggleTheme()" class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+            <i id="themeIcon" class="fa-solid fa-moon text-xs"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- CENTER MINIMALIST WORKSPACE -->
+      <main class="flex-1 flex items-center justify-center p-4 sm:p-8">
+        <div class="w-full max-w-md border border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-[#111827]/60 p-6 sm:p-8 text-center space-y-6 shadow-sm">
+
+          <!-- Title -->
+          <div class="space-y-1">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Merge PDF
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400">
+              No PDF files selected
+            </p>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input 
+            type="file" 
+            id="pdfInput" 
+            multiple 
+            accept=".pdf,application/pdf" 
+            class="hidden" 
+            onchange="handlePdfUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD PDF -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('pdfInput').click()"
+              class="w-full py-4 px-6 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.99] text-white font-bold text-sm sm:text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-file-arrow-up text-lg"></i>
+              <span>Upload PDF</span>
+            </button>
+          </div>
+
+          <!-- Minimal Selected Files List (Only shows when files are added) -->
+          <div id="fileList" class="hidden max-h-36 overflow-y-auto space-y-1.5 text-left border-t border-b border-slate-200 dark:border-slate-800 py-2.5">
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET -->
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="mergeAndDownload()"
+              disabled
+              class="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-download"></i>
+              <span id="downloadBtnText">Download</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              disabled
+              class="py-2.5 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MINIMAL FOOTER -->
+      <footer class="border-t border-slate-200 dark:border-slate-800 px-5 py-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side Merge PDF
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- MINIMAL SCRIPT -->
+  <script>
+    let uploadedPdfs = [];
+
+    // 1. Upload PDF Handler
+    async function handlePdfUpload(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = 'Reading PDF files...';
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+          try {
+            const buffer = await file.arrayBuffer();
+            const doc = await PDFLib.PDFDocument.load(buffer, { ignoreEncryption: true });
+            uploadedPdfs.push({
+              name: file.name,
+              buffer: buffer,
+              pages: doc.getPageCount()
+            });
+          } catch (e) {
+            console.error('Invalid PDF:', file.name);
+          }
+        }
+      }
+
+      event.target.value = '';
+      updateUI();
+    }
+
+    // Update Minimal UI State
+    function updateUI() {
+      const status = document.getElementById('statusText');
+      const fileList = document.getElementById('fileList');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const resetBtn = document.getElementById('resetBtn');
+
+      if (uploadedPdfs.length === 0) {
+        status.innerText = 'No PDF files selected';
+        fileList.innerHTML = '';
+        fileList.classList.add('hidden');
+        downloadBtn.disabled = true;
+        resetBtn.disabled = true;
+        return;
+      }
+
+      const totalPages = uploadedPdfs.reduce((sum, item) => sum + item.pages, 0);
+      status.innerText = `${uploadedPdfs.length} PDF file(s) selected • ${totalPages} pages total`;
+
+      fileList.classList.remove('hidden');
+      fileList.innerHTML = uploadedPdfs.map((f, idx) => `
+        <div class="flex items-center justify-between text-xs px-2 py-1 rounded bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800">
+          <span class="truncate font-medium text-slate-700 dark:text-slate-200">${idx + 1}. ${f.name}</span>
+          <span class="font-mono text-[10px] text-slate-400 shrink-0 ml-2">${f.pages}p</span>
+        </div>
+      `).join('');
+
+      downloadBtn.disabled = false;
+      resetBtn.disabled = false;
+    }
+
+    // 2. Merge & Download Handler
+    async function mergeAndDownload() {
+      if (uploadedPdfs.length === 0) return;
+
+      const downloadBtn = document.getElementById('downloadBtn');
+      const btnText = document.getElementById('downloadBtnText');
+      const status = document.getElementById('statusText');
+
+      try {
+        downloadBtn.disabled = true;
+        btnText.innerText = 'Merging...';
+
+        const mergedPdf = await PDFLib.PDFDocument.create();
+
+        for (const item of uploadedPdfs) {
+          const pdf = await PDFLib.PDFDocument.load(item.buffer, { ignoreEncryption: true });
+          const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+          copiedPages.forEach(page => mergedPdf.addPage(page));
+        }
+
+        const mergedBytes = await mergedPdf.save();
+        const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'freezip-merged.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        status.innerText = 'Merged PDF downloaded!';
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Error merging PDF files.';
+      } finally {
+        downloadBtn.disabled = false;
+        btnText.innerText = 'Download';
+      }
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      uploadedPdfs = [];
+      updateUI();
+    }
+
+    // Minimal Theme Switcher
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>
