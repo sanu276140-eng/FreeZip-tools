@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>HTML Minifier — FreeZip</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    textarea {
+      tab-size: 2;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="https://www.freezip.site/" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="https://www.freezip.site/" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              HTML Minifier
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Upload HTML file or paste markup below
+            </p>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input 
+            type="file" 
+            id="htmlFileInput" 
+            accept=".html,.htm,.txt,text/html,text/plain" 
+            class="hidden" 
+            onchange="handleHtmlUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD HTML (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('htmlFileInput').click()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-file-code text-lg"></i>
+              <span>Upload HTML</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Editor & Mode Selection Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-2.5">
+            <!-- Mode Pills (Standard Minify, Ultra Minify, Beautify) -->
+            <div class="flex items-center justify-between text-xs flex-wrap gap-1">
+              <div class="flex items-center gap-1 font-mono text-[11px]">
+                <button type="button" onclick="setMode('minify')" id="modeMinifyBtn" class="px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all">Minify</button>
+                <button type="button" onclick="setMode('ultra')" id="modeUltraBtn" class="px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Ultra</button>
+                <button type="button" onclick="setMode('beautify')" id="modeBeautifyBtn" class="px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Beautify</button>
+              </div>
+
+              <!-- Quick Sample & Copy Helper -->
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="loadSampleHtml()" class="text-[10px] font-mono font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                  Sample
+                </button>
+                <button type="button" onclick="copyFormattedHtml()" id="copyBtn" class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1">
+                  <i class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyBtnText">Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- HTML Textarea Input -->
+            <div class="relative">
+              <textarea 
+                id="htmlEditor"
+                rows="7"
+                oninput="handleEditorInput(this.value)"
+                placeholder="Paste raw HTML here or click 'Upload HTML'..."
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors resize-y leading-relaxed"
+                spellcheck="false"
+              ></textarea>
+            </div>
+
+            <!-- Live Validation & Savings Pill Badge -->
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span id="validationBadge" class="text-slate-400">Waiting for HTML input...</span>
+              <span id="savingsDisplay" class="text-slate-400 font-semibold">0 chars</span>
+            </div>
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadHtmlFile()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% HTML Minifier
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- HTML MINIFIER JAVASCRIPT LOGIC -->
+  <script>
+    let activeMode = 'minify'; // 'minify', 'ultra', 'beautify'
+    let rawHtml = '';
+    let originalFileName = 'index.html';
+
+    // Mode Selector (Minify, Ultra, Beautify)
+    function setMode(mode) {
+      activeMode = mode;
+      const btnMinify = document.getElementById('modeMinifyBtn');
+      const btnUltra = document.getElementById('modeUltraBtn');
+      const btnBeautify = document.getElementById('modeBeautifyBtn');
+
+      [btnMinify, btnUltra, btnBeautify].forEach(b => {
+        b.className = 'px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+      });
+
+      if (mode === 'minify') {
+        btnMinify.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      } else if (mode === 'ultra') {
+        btnUltra.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      } else {
+        btnBeautify.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      }
+
+      if (rawHtml.trim()) {
+        const processed = processHtml(rawHtml, activeMode);
+        document.getElementById('htmlEditor').value = processed;
+        updateStats(rawHtml, processed);
+      }
+    }
+
+    // In-browser HTML Minifier & Formatter Engine
+    function processHtml(html, mode) {
+      if (!html.trim()) return '';
+
+      // Mode 1: Standard Minify (Safe Whitespace & Comments Removal)
+      if (mode === 'minify') {
+        return html
+          .replace(/<!--(?!\[if)[\s\S]*?-->/g, '') // Remove HTML comments (protect IE conditionals)
+          .replace(/>\s+</g, '><')                  // Remove spaces between tags
+          .replace(/\s{2,}/g, ' ')                  // Collapse multi-spaces into single space
+          .trim();
+      }
+
+      // Mode 2: Ultra Minify (Aggressive Stripping + Inline Script/Style Cleanup)
+      if (mode === 'ultra') {
+        return html
+          .replace(/<!--[\s\S]*?-->/g, '')         // Remove all comments
+          .replace(/\/\*[\s\S]*?\*\//g, '')        // Remove CSS/JS multiline comments inside tags
+          .replace(/>\s+</g, '><')                  // Remove inter-tag whitespace
+          .replace(/\n|\r|\t/g, '')                // Strip all linebreaks and tabs
+          .replace(/\s{2,}/g, ' ')                  // Compress spaces
+          .trim();
+      }
+
+      // Mode 3: Beautify / Pretty-Print HTML
+      if (mode === 'beautify') {
+        let formatted = '';
+        let indent = '';
+        const tab = '  ';
+
+        // Normalize spaces
+        const clean = html
+          .replace(/>\s*</g, '>\n<')
+          .replace(/\n\s*\n/g, '\n')
+          .trim();
+
+        const lines = clean.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+          let line = lines[i].trim();
+          if (!line) continue;
+
+          // Decrement indent for closing tags
+          if (line.match(/^<\/\w/) && !line.match(/^<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)/i)) {
+            indent = indent.substring(tab.length);
+          }
+
+          formatted += indent + line + '\n';
+
+          // Increment indent for opening tags (excluding void and self-closing tags)
+          const isOpeningTag = line.match(/^<[^\/]/) && !line.match(/\/>$/);
+          const isVoidTag = line.match(/^<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr|!DOCTYPE)/i);
+          const hasClosingTagSameLine = line.match(/<\/[^>]+>$/);
+
+          if (isOpeningTag && !isVoidTag && !hasClosingTagSameLine) {
+            indent += tab;
+          }
+        }
+        return formatted.trim();
+      }
+
+      return html;
+    }
+
+    // Update Live Statistics & Character Savings
+    function updateStats(original, processed) {
+      const savingsDisplay = document.getElementById('savingsDisplay');
+      const validationBadge = document.getElementById('validationBadge');
+      const statusText = document.getElementById('statusText');
+
+      if (!original.trim()) {
+        savingsDisplay.innerText = '0 chars';
+        validationBadge.innerText = 'Waiting for HTML input...';
+        validationBadge.className = 'text-slate-400';
+        statusText.innerText = 'Upload HTML file or paste markup below';
+        return;
+      }
+
+      const origLen = original.length;
+      const procLen = processed.length;
+
+      if (procLen < origLen) {
+        const saved = origLen - procLen;
+        const pct = Math.round((saved / origLen) * 100);
+        savingsDisplay.innerText = `${procLen} chars (${pct}% smaller)`;
+        validationBadge.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Saved ${saved} chars (${pct}%)</span>`;
+        statusText.innerText = `HTML optimized • Reduced by ${pct}%`;
+      } else {
+        savingsDisplay.innerText = `${procLen} chars`;
+        validationBadge.innerHTML = '<span class="text-slate-600 dark:text-slate-300 font-semibold">HTML Ready</span>';
+        statusText.innerText = 'HTML ready to download';
+      }
+    }
+
+    // Live Textarea Listener
+    function handleEditorInput(val) {
+      rawHtml = val;
+      const downloadBtn = document.getElementById('downloadBtn');
+      const resetBtn = document.getElementById('resetBtn');
+
+      if (!val.trim()) {
+        downloadBtn.disabled = true;
+        resetBtn.disabled = true;
+        updateStats('', '');
+        return;
+      }
+
+      resetBtn.disabled = false;
+      downloadBtn.disabled = false;
+      updateStats(rawHtml, val);
+    }
+
+    // 1. Upload HTML Handler
+    async function handleHtmlUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = 'Reading HTML file...';
+
+      try {
+        const text = await file.text();
+        rawHtml = text;
+        originalFileName = file.name.endsWith('.html') || file.name.endsWith('.htm') ? file.name : `${file.name}.html`;
+
+        const processed = processHtml(text, activeMode);
+        document.getElementById('htmlEditor').value = processed;
+        document.getElementById('downloadBtn').disabled = false;
+        document.getElementById('resetBtn').disabled = false;
+        updateStats(rawHtml, processed);
+        status.innerText = `Loaded ${file.name} successfully!`;
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Could not read HTML file.';
+      }
+
+      event.target.value = '';
+    }
+
+    // Quick Test Sample HTML
+    function loadSampleHtml() {
+      const sample = `<!DOCTYPE html>
+<html lang="en">
+  <!-- FreeZip-Tools HTML Sample -->
+  <head>
+    <meta charset="UTF-8">
+    <title>Sample Page</title>
+    <style>
+      body { margin: 0; font-family: sans-serif; }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <h1>Hello FreeZip-Tools</h1>
+      <p>100% In-Browser HTML Minifier & Utility Suite.</p>
+    </header>
+  </body>
+</html>`;
+
+      rawHtml = sample;
+      originalFileName = 'sample.html';
+      const processed = processHtml(sample, activeMode);
+      document.getElementById('htmlEditor').value = processed;
+      document.getElementById('downloadBtn').disabled = false;
+      document.getElementById('resetBtn').disabled = false;
+      updateStats(rawHtml, processed);
+    }
+
+    // Copy to Clipboard (using document.execCommand for iframe sandbox reliability)
+    function copyFormattedHtml() {
+      const editor = document.getElementById('htmlEditor');
+      if (!editor.value.trim()) return;
+
+      editor.select();
+      editor.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        const copyBtnText = document.getElementById('copyBtnText');
+        copyBtnText.innerText = 'Copied!';
+        setTimeout(() => {
+          copyBtnText.innerText = 'Copy';
+        }, 1800);
+      } catch (e) {
+        console.error('Copy failed');
+      }
+    }
+
+    // 2. Download Minified HTML File
+    function downloadHtmlFile() {
+      const editor = document.getElementById('htmlEditor');
+      const content = editor.value;
+      if (!content.trim()) return;
+
+      const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      const suffix = activeMode === 'beautify' ? '-beautified.html' : '-min.html';
+      a.download = originalFileName.replace(/\.(html|htm|txt)$/i, '') + suffix;
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = `Downloaded ${a.download}!`;
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      rawHtml = '';
+      originalFileName = 'index.html';
+      document.getElementById('htmlEditor').value = '';
+      document.getElementById('statusText').innerText = 'Upload HTML file or paste markup below';
+      document.getElementById('validationBadge').innerText = 'Waiting for HTML input...';
+      document.getElementById('validationBadge').className = 'text-slate-400';
+      document.getElementById('savingsDisplay').innerText = '0 chars';
+      document.getElementById('downloadBtn').disabled = true;
+      document.getElementById('resetBtn').disabled = true;
+      setMode('minify');
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>

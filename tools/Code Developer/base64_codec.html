@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Base64 Codec — FreeZip</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    textarea {
+      tab-size: 2;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="https://www.freezip.site/" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="https://www.freezip.site/" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Base64 Codec
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Upload any file or paste content below
+            </p>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input 
+            type="file" 
+            id="fileInput" 
+            class="hidden" 
+            onchange="handleFileUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD FILE (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('fileInput').click()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-arrow-right-arrow-left text-lg"></i>
+              <span id="uploadBtnLabel">Upload File</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Editor & Mode Selection Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-2.5">
+            <!-- Mode Pills (Encode, Decode, URL-Safe Mode) -->
+            <div class="flex items-center justify-between text-xs flex-wrap gap-1">
+              <div class="flex items-center gap-1 font-mono text-[11px]">
+                <button type="button" onclick="setMode('encode')" id="modeEncodeBtn" class="px-2.5 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all">Encode</button>
+                <button type="button" onclick="setMode('decode')" id="modeDecodeBtn" class="px-2.5 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Decode</button>
+                <button type="button" onclick="toggleUrlSafe()" id="urlSafeBtn" class="px-2 py-0.5 rounded font-semibold text-slate-400 bg-transparent hover:text-slate-700 dark:hover:text-slate-200 transition-all" title="Toggle URL-Safe Base64 (+/- and _)">URL-Safe</button>
+              </div>
+
+              <!-- Quick Sample & Copy Helper -->
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="loadSampleContent()" class="text-[10px] font-mono font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                  Sample
+                </button>
+                <button type="button" onclick="copyEditorContent()" id="copyBtn" class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1">
+                  <i class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyBtnText">Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Code/Text Area Input -->
+            <div class="relative">
+              <textarea 
+                id="codecEditor"
+                rows="7"
+                oninput="handleEditorInput(this.value)"
+                placeholder="Type or paste text to encode, or paste Base64 string to decode..."
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors resize-y leading-relaxed break-all"
+                spellcheck="false"
+              ></textarea>
+            </div>
+
+            <!-- Live Validation & Length Stats -->
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span id="validationBadge" class="text-slate-400">Waiting for input...</span>
+              <span id="charCountDisplay" class="text-slate-400 font-semibold">0 chars</span>
+            </div>
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadResultFile()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Base64 Codec
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- BASE64 CODEC JAVASCRIPT LOGIC -->
+  <script>
+    let activeMode = 'encode'; // 'encode' or 'decode'
+    let isUrlSafe = false;
+    let decodedBinaryBlob = null;
+    let originalFileName = 'data.txt';
+    let rawInput = '';
+
+    // Switch between Encode and Decode modes
+    function setMode(mode) {
+      activeMode = mode;
+      const btnEncode = document.getElementById('modeEncodeBtn');
+      const btnDecode = document.getElementById('modeDecodeBtn');
+      const editor = document.getElementById('codecEditor');
+      const uploadLabel = document.getElementById('uploadBtnLabel');
+
+      if (mode === 'encode') {
+        btnEncode.className = 'px-2.5 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+        btnDecode.className = 'px-2.5 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+        editor.placeholder = "Type or paste text to encode into Base64...";
+        uploadLabel.innerText = "Upload File to Encode";
+      } else {
+        btnDecode.className = 'px-2.5 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+        btnEncode.className = 'px-2.5 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+        editor.placeholder = "Paste Base64 string to decode into raw data...";
+        uploadLabel.innerText = "Upload Base64 File";
+      }
+
+      // If text exists, convert to the new mode
+      if (editor.value.trim()) {
+        processCodec(editor.value);
+      }
+    }
+
+    // Toggle URL-Safe Base64 (- and _ instead of + and /)
+    function toggleUrlSafe() {
+      isUrlSafe = !isUrlSafe;
+      const btn = document.getElementById('urlSafeBtn');
+      if (isUrlSafe) {
+        btn.className = 'px-2 py-0.5 rounded font-semibold bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 transition-all';
+      } else {
+        btn.className = 'px-2 py-0.5 rounded font-semibold text-slate-400 bg-transparent hover:text-slate-700 dark:hover:text-slate-200 transition-all';
+      }
+
+      const editor = document.getElementById('codecEditor');
+      if (editor.value.trim()) {
+        processCodec(editor.value);
+      }
+    }
+
+    // UTF-8 Safe Base64 Encoder
+    function utf8ToBase64(str, urlSafe = false) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      let b64 = btoa(binary);
+      if (urlSafe) {
+        b64 = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+      return b64;
+    }
+
+    // UTF-8 Safe Base64 Decoder
+    function base64ToUtf8(b64) {
+      // Normalize URL-safe Base64
+      let clean = b64.trim().replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+      while (clean.length % 4 !== 0) {
+        clean += '=';
+      }
+
+      const binary = atob(clean);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+
+      // Try UTF-8 text decoding
+      try {
+        const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+        return { text: text, blob: null, isBinary: false };
+      } catch (e) {
+        // Fallback to binary representation if not valid UTF-8
+        const blob = new Blob([bytes], { type: 'application/octet-stream' });
+        return { text: `[Binary Data: ${bytes.length} bytes]`, blob: blob, isBinary: true };
+      }
+    }
+
+    // Main conversion engine
+    function processCodec(input) {
+      const status = document.getElementById('statusText');
+      const validationBadge = document.getElementById('validationBadge');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const charCountDisplay = document.getElementById('charCountDisplay');
+      const editor = document.getElementById('codecEditor');
+
+      decodedBinaryBlob = null;
+      charCountDisplay.innerText = `${input.length} chars`;
+
+      if (!input.trim()) {
+        status.innerText = 'Upload any file or paste content below';
+        validationBadge.innerText = 'Waiting for input...';
+        validationBadge.className = 'text-slate-400';
+        downloadBtn.disabled = true;
+        resetBtn.disabled = true;
+        return;
+      }
+
+      resetBtn.disabled = false;
+
+      if (activeMode === 'encode') {
+        try {
+          const encoded = utf8ToBase64(input, isUrlSafe);
+          validationBadge.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Encoded (${encoded.length} chars)</span>`;
+          status.innerText = isUrlSafe ? 'Base64 (URL-Safe) encoded successfully!' : 'Base64 encoded successfully!';
+          downloadBtn.disabled = false;
+        } catch (err) {
+          validationBadge.innerHTML = `<span class="text-red-500 font-bold"><i class="fa-solid fa-circle-xmark mr-1"></i>Encoding error</span>`;
+          downloadBtn.disabled = true;
+        }
+      } else {
+        // Decode mode
+        try {
+          let b64 = input.trim();
+          // Strip data URL prefixes like data:image/png;base64,
+          if (b64.includes('base64,')) {
+            b64 = b64.split('base64,')[1];
+          }
+
+          const result = base64ToUtf8(b64);
+          if (result.isBinary) {
+            decodedBinaryBlob = result.blob;
+            validationBadge.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-file-zipper mr-1"></i>Binary payload ready</span>`;
+            status.innerText = 'Decoded binary file ready to download!';
+          } else {
+            validationBadge.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Valid Base64 Text</span>`;
+            status.innerText = 'Decoded string ready to download!';
+          }
+          downloadBtn.disabled = false;
+        } catch (err) {
+          validationBadge.innerHTML = `<span class="text-red-500 font-bold"><i class="fa-solid fa-circle-xmark mr-1"></i>Invalid Base64 string</span>`;
+          status.innerText = 'Invalid Base64 sequence';
+          downloadBtn.disabled = true;
+        }
+      }
+    }
+
+    // Live textarea listener
+    function handleEditorInput(val) {
+      rawInput = val;
+      processCodec(val);
+    }
+
+    // 1. Upload File Handler
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = `Reading ${file.name}...`;
+
+      try {
+        originalFileName = file.name;
+
+        if (activeMode === 'encode') {
+          // Read as DataURL for rich media or binary, or text
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            // Extract raw base64 string
+            const base64Content = dataUrl.split(',')[1] || dataUrl;
+            document.getElementById('codecEditor').value = base64Content;
+            processCodec(base64Content);
+            status.innerText = `Encoded ${file.name} to Base64!`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          // In decode mode, read file text
+          const text = await file.text();
+          document.getElementById('codecEditor').value = text;
+          processCodec(text);
+          status.innerText = `Loaded Base64 from ${file.name}!`;
+        }
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Could not read file.';
+      }
+
+      event.target.value = '';
+    }
+
+    // Quick Test Sample
+    function loadSampleContent() {
+      if (activeMode === 'encode') {
+        const sampleText = "FreeZip-Tools: Fast, Secure & 100% In-Browser Utilities.";
+        originalFileName = 'sample.txt';
+        document.getElementById('codecEditor').value = sampleText;
+        processCodec(sampleText);
+      } else {
+        const sampleBase64 = "RnJlZVppcC1Ub29sczogRmFzdCwgU2VjdXJlICYgMTAwJSBJbi1Ccm93c2VyIFV0aWxpdGllcy4=";
+        originalFileName = 'sample-decoded.txt';
+        document.getElementById('codecEditor').value = sampleBase64;
+        processCodec(sampleBase64);
+      }
+    }
+
+    // Copy to Clipboard (using document.execCommand for iframe sandbox reliability)
+    function copyEditorContent() {
+      const editor = document.getElementById('codecEditor');
+      if (!editor.value.trim()) return;
+
+      // If in encode mode, copy encoded output
+      let textToCopy = editor.value;
+      if (activeMode === 'encode') {
+        textToCopy = utf8ToBase64(editor.value, isUrlSafe);
+      } else {
+        try {
+          let b64 = editor.value.trim();
+          if (b64.includes('base64,')) b64 = b64.split('base64,')[1];
+          const decoded = base64ToUtf8(b64);
+          if (!decoded.isBinary) textToCopy = decoded.text;
+        } catch (e) {}
+      }
+
+      const tempArea = document.createElement('textarea');
+      tempArea.value = textToCopy;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        const copyBtnText = document.getElementById('copyBtnText');
+        copyBtnText.innerText = 'Copied!';
+        setTimeout(() => {
+          copyBtnText.innerText = 'Copy';
+        }, 1800);
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    // 2. Download Result File
+    function downloadResultFile() {
+      const editor = document.getElementById('codecEditor');
+      const val = editor.value;
+      if (!val.trim()) return;
+
+      let blob = null;
+      let downloadName = 'file';
+
+      if (activeMode === 'encode') {
+        const encoded = utf8ToBase64(val, isUrlSafe);
+        blob = new Blob([encoded], { type: 'text/plain;charset=utf-8' });
+        downloadName = originalFileName.replace(/\.[^/.]+$/, "") + '-base64.txt';
+      } else {
+        // Decode Mode
+        if (decodedBinaryBlob) {
+          blob = decodedBinaryBlob;
+          downloadName = originalFileName.replace(/-base64|\.txt$/gi, "") || 'decoded-file.bin';
+        } else {
+          let b64 = val.trim();
+          if (b64.includes('base64,')) b64 = b64.split('base64,')[1];
+          const res = base64ToUtf8(b64);
+          blob = new Blob([res.text], { type: 'text/plain;charset=utf-8' });
+          downloadName = originalFileName.replace(/-base64|\.txt$/gi, "") + '-decoded.txt';
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = downloadName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = `Downloaded ${downloadName}!`;
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      rawInput = '';
+      decodedBinaryBlob = null;
+      originalFileName = 'data.txt';
+      document.getElementById('codecEditor').value = '';
+      document.getElementById('statusText').innerText = 'Upload any file or paste content below';
+      document.getElementById('validationBadge').innerText = 'Waiting for input...';
+      document.getElementById('validationBadge').className = 'text-slate-400';
+      document.getElementById('charCountDisplay').innerText = '0 chars';
+      document.getElementById('downloadBtn').disabled = true;
+      document.getElementById('resetBtn').disabled = true;
+      setMode('encode');
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>

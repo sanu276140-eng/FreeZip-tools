@@ -21,14 +21,14 @@ const CATEGORIES_DATA = [
     title: "Code & Developer Tools",
     badge: "Code",
     tools: [
-      { name: "JSON Formatter", color: "#2563EB", icon: "fa-solid fa-code" },
-      { name: "SQL Prettify", color: "#1D4ED8", icon: "fa-solid fa-database" },
-      { name: "HTML Minifier", color: "#0284C7", icon: "fa-solid fa-file-code" },
-      { name: "CSS Minifier", color: "#0EA5E9", icon: "fa-solid fa-file-contract" },
-      { name: "JS Obfuscator", color: "#06B6D4", icon: "fa-brands fa-js" },
-      { name: "Base64 Codec", color: "#0891B2", icon: "fa-solid fa-arrow-right-arrow-left" },
-      { name: "URL Encoder", color: "#0D9488", icon: "fa-solid fa-link" },
-      { name: "cURL to Fetch", color: "#14B8A6", icon: "fa-solid fa-terminal" }
+      { name: "JSON Formatter", color: "#2563EB", icon: "fa-solid fa-code", url: "tools/Code Developer/json_formatter.html" },
+      { name: "SQL Prettify", color: "#1D4ED8", icon: "fa-solid fa-database", url: "tools/Code Developer/sql_prettify.html" },
+      { name: "HTML Minifier", color: "#0284C7", icon: "fa-solid fa-file-code", url: "tools/Code Developer/html_minifier.html" },
+      { name: "CSS Minifier", color: "#0EA5E9", icon: "fa-solid fa-file-contract", url: "tools/Code Developer/css_minifier.html" },
+      { name: "JS Obfuscator", color: "#06B6D4", icon: "fa-brands fa-js", url: "tools/Code Developer/js_obfuscator.html" },
+      { name: "Base64 Codec", color: "#0891B2", icon: "fa-solid fa-arrow-right-arrow-left", url: "tools/Code Developer/base64_codec.html" },
+      { name: "URL Encoder", color: "#0D9488", icon: "fa-solid fa-link", url: "tools/Code Developer/url_encoder.html" },
+      { name: "cURL to Fetch", color: "#14B8A6", icon: "fa-solid fa-terminal", url: "tools/Code Developer/curl_to_fetch.html" }
     ]
   },
   {
@@ -36,14 +36,14 @@ const CATEGORIES_DATA = [
     title: "Design & Styling Studio",
     badge: "Design",
     tools: [
-      { name: "Color Palette", color: "#4F46E5", icon: "fa-solid fa-palette" },
-      { name: "CSS Gradient", color: "#6366F1", icon: "fa-solid fa-fill-drip" },
-      { name: "Box Shadow", color: "#818CF8", icon: "fa-solid fa-cube" },
-      { name: "Glassmorphism", color: "#7C3AED", icon: "fa-solid fa-wand-magic-sparkles" },
-      { name: "Border Radius", color: "#8B5CF6", icon: "fa-solid fa-draw-polygon" },
-      { name: "SVG Optimizer", color: "#A855F7", icon: "fa-solid fa-bezier-curve" },
-      { name: "Color Contrast", color: "#9333EA", icon: "fa-solid fa-circle-half-stroke" },
-      { name: "Favicon Maker", color: "#C026D3", icon: "fa-solid fa-star" }
+      { name: "Color Palette", color: "#4F46E5", icon: "fa-solid fa-palette", url: "tools/Design Styling/color_palette.html" },
+      { name: "CSS Gradient", color: "#6366F1", icon: "fa-solid fa-fill-drip", url: "tools/Design Styling/" },
+      { name: "Box Shadow", color: "#818CF8", icon: "fa-solid fa-cube", url: "tools/Design Styling/" },
+      { name: "Glassmorphism", color: "#7C3AED", icon: "fa-solid fa-wand-magic-sparkles", url: "tools/Design Styling/" },
+      { name: "Border Radius", color: "#8B5CF6", icon: "fa-solid fa-draw-polygon", url: "tools/Design Styling/" },
+      { name: "SVG Optimizer", color: "#A855F7", icon: "fa-solid fa-bezier-curve", url: "tools/Design Styling/" },
+      { name: "Color Contrast", color: "#9333EA", icon: "fa-solid fa-circle-half-stroke", url: "tools/Design Styling/" },
+      { name: "Favicon Maker", color: "#C026D3", icon: "fa-solid fa-star", url: "tools/Design Styling/" }
     ]
   },
   {

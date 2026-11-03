@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>cURL to Fetch — FreeZip</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    textarea {
+      tab-size: 2;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="https://www.freezip.site/" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="https://www.freezip.site/" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              cURL to Fetch
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Upload cURL file or paste command below
+            </p>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input 
+            type="file" 
+            id="curlFileInput" 
+            accept=".sh,.curl,.txt,text/plain" 
+            class="hidden" 
+            onchange="handleFileUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD cURL (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('curlFileInput').click()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-terminal text-lg"></i>
+              <span>Upload cURL Script / File</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Dual Workspace Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3">
+            
+            <!-- SECTION A: cURL Input -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px] flex items-center gap-1.5">
+                  <i class="fa-solid fa-chevron-right text-red-500 text-[10px]"></i>
+                  <span>cURL Command:</span>
+                </span>
+                <button type="button" onclick="loadSampleCurl()" class="text-[10px] font-mono font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                  Sample
+                </button>
+              </div>
+              <textarea 
+                id="curlInput"
+                rows="3"
+                oninput="handleInput(this.value)"
+                placeholder="curl -X POST https://api.example.com/data -H 'Content-Type: application/json' -d '{...}'"
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors resize-y leading-relaxed break-all"
+                spellcheck="false"
+              ></textarea>
+            </div>
+
+            <!-- SECTION B: Target Output Format Pills & Copy Button -->
+            <div class="flex items-center justify-between text-xs flex-wrap gap-1 pt-1 border-t border-slate-200 dark:border-slate-800">
+              <div class="flex items-center gap-1 font-mono text-[11px]">
+                <button type="button" onclick="setFormat('async')" id="btnFormatAsync" class="px-2.5 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all">Async/Await</button>
+                <button type="button" onclick="setFormat('promise')" id="btnFormatPromise" class="px-2.5 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Promise</button>
+                <button type="button" onclick="setFormat('axios')" id="btnFormatAxios" class="px-2.5 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Axios</button>
+              </div>
+
+              <!-- Quick Copy Helper -->
+              <button type="button" onclick="copyFetchCode()" id="copyBtn" class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1">
+                <i class="fa-regular fa-copy text-[10px]"></i>
+                <span id="copyBtnText">Copy</span>
+              </button>
+            </div>
+
+            <!-- Converted Code Output -->
+            <div class="relative">
+              <textarea 
+                id="fetchOutput"
+                rows="6"
+                readonly
+                placeholder="// Converted fetch() JavaScript will appear here..."
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-950/80 text-emerald-700 dark:text-emerald-400 placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors resize-y leading-relaxed"
+                spellcheck="false"
+              ></textarea>
+            </div>
+
+            <!-- Live Status & Stats -->
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span id="validationBadge" class="text-slate-400">Waiting for cURL input...</span>
+              <span id="charCountDisplay" class="text-slate-400 font-semibold">0 lines</span>
+            </div>
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadResultFile()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% cURL to Fetch
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- cURL TO FETCH JAVASCRIPT LOGIC -->
+  <script>
+    let activeFormat = 'async'; // 'async', 'promise', 'axios'
+    let originalFileName = 'fetch-request.js';
+    let currentParsed = null;
+
+    // Switch between output formats
+    function setFormat(fmt) {
+      activeFormat = fmt;
+      const btnAsync = document.getElementById('btnFormatAsync');
+      const btnPromise = document.getElementById('btnFormatPromise');
+      const btnAxios = document.getElementById('btnFormatAxios');
+
+      [btnAsync, btnPromise, btnAxios].forEach(b => {
+        b.className = 'px-2.5 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+      });
+
+      if (fmt === 'async') {
+        btnAsync.className = 'px-2.5 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      } else if (fmt === 'promise') {
+        btnPromise.className = 'px-2.5 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      } else {
+        btnAxios.className = 'px-2.5 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      }
+
+      if (currentParsed) {
+        renderGeneratedCode(currentParsed);
+      }
+    }
+
+    // 100% In-Browser Robust cURL Argument Tokenizer & Parser
+    function parseCurlCommand(raw) {
+      let cmd = raw.replace(/\\\r?\n/g, ' ').trim();
+      if (cmd.toLowerCase().startsWith('curl ')) {
+        cmd = cmd.substring(5).trim();
+      }
+
+      const tokens = [];
+      let current = '';
+      let inSingle = false;
+      let inDouble = false;
+      let escaped = false;
+
+      for (let i = 0; i < cmd.length; i++) {
+        const ch = cmd[i];
+        if (escaped) {
+          current += ch;
+          escaped = false;
+          continue;
+        }
+        if (ch === '\\' && !inSingle) {
+          escaped = true;
+          continue;
+        }
+        if (ch === "'" && !inDouble) {
+          inSingle = !inSingle;
+          continue;
+        }
+        if (ch === '"' && !inSingle) {
+          inDouble = !inDouble;
+          continue;
+        }
+        if (/\s/.test(ch) && !inSingle && !inDouble) {
+          if (current.length > 0) {
+            tokens.push(current);
+            current = '';
+          }
+        } else {
+          current += ch;
+        }
+      }
+      if (current.length > 0) tokens.push(current);
+
+      let url = '';
+      let method = '';
+      const headers = {};
+      let body = '';
+      let user = '';
+
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+
+        if (token === '-X' || token === '--request') {
+          method = (tokens[++i] || '').toUpperCase();
+        } else if (token === '-H' || token === '--header') {
+          const h = tokens[++i] || '';
+          const colonIdx = h.indexOf(':');
+          if (colonIdx > -1) {
+            const key = h.substring(0, colonIdx).trim();
+            const val = h.substring(colonIdx + 1).trim();
+            headers[key] = val;
+          }
+        } else if (token === '-d' || token === '--data' || token === '--data-raw' || token === '--data-binary') {
+          body = tokens[++i] || '';
+          if (!method) method = 'POST';
+        } else if (token === '-u' || token === '--user') {
+          user = tokens[++i] || '';
+        } else if (token === '-A' || token === '--user-agent') {
+          headers['User-Agent'] = tokens[++i] || '';
+        } else if (!token.startsWith('-') && !url) {
+          url = token.replace(/^['"]|['"]$/g, '');
+        }
+      }
+
+      if (!url && tokens.length > 0) {
+        const foundUrl = tokens.find(t => /^https?:\/\//i.test(t));
+        if (foundUrl) url = foundUrl.replace(/^['"]|['"]$/g, '');
+      }
+
+      if (!url) url = 'https://api.example.com/endpoint';
+      if (!method) method = body ? 'POST' : 'GET';
+
+      if (user) {
+        try {
+          headers['Authorization'] = 'Basic ' + btoa(user);
+        } catch (e) {
+          headers['Authorization'] = 'Basic ' + user;
+        }
+      }
+
+      return { url, method, headers, body };
+    }
+
+    // Generate Javascript Fetch / Axios Code
+    function generateJsCode(parsed, format) {
+      const { url, method, headers, body } = parsed;
+      const hasHeaders = Object.keys(headers).length > 0;
+      let isJsonBody = false;
+      let parsedJsonBody = null;
+
+      if (body) {
+        try {
+          parsedJsonBody = JSON.parse(body);
+          isJsonBody = true;
+        } catch (e) {
+          isJsonBody = false;
+        }
+      }
+
+      let headersStr = '';
+      if (hasHeaders) {
+        headersStr = JSON.stringify(headers, null, 4);
+      }
+
+      // 1. ASYNC / AWAIT
+      if (format === 'async') {
+        let code = `async function makeRequest() {\n  const url = "${url}";\n  const options = {\n    method: "${method}"`;
+
+        if (hasHeaders) {
+          code += `,\n    headers: ${headersStr.replace(/\n/g, '\n    ')}`;
+        }
+
+        if (body) {
+          if (isJsonBody) {
+            code += `,\n    body: JSON.stringify(${JSON.stringify(parsedJsonBody, null, 2).replace(/\n/g, '\n    ')})`;
+          } else {
+            code += `,\n    body: ${JSON.stringify(body)}`;
+          }
+        }
+
+        code += `\n  };\n\n  try {\n    const response = await fetch(url, options);\n    const result = await response.json();\n    console.log(result);\n  } catch (error) {\n    console.error("Fetch error:", error);\n  }\n}\n\nmakeRequest();`;
+        return code;
+      }
+
+      // 2. PROMISE (.then)
+      if (format === 'promise') {
+        let code = `fetch("${url}", {\n  method: "${method}"`;
+
+        if (hasHeaders) {
+          code += `,\n  headers: ${headersStr.replace(/\n/g, '\n  ')}`;
+        }
+
+        if (body) {
+          if (isJsonBody) {
+            code += `,\n  body: JSON.stringify(${JSON.stringify(parsedJsonBody, null, 2).replace(/\n/g, '\n  ')})`;
+          } else {
+            code += `,\n  body: ${JSON.stringify(body)}`;
+          }
+        }
+
+        code += `\n})\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => console.error("Request failed:", error));`;
+        return code;
+      }
+
+      // 3. AXIOS
+      if (format === 'axios') {
+        let code = `const axios = require('axios'); // or import axios from 'axios'\n\n`;
+        code += `async function sendAxiosRequest() {\n  const config = {\n    method: "${method.toLowerCase()}",\n    url: "${url}"`;
+
+        if (hasHeaders) {
+          code += `,\n    headers: ${headersStr.replace(/\n/g, '\n    ')}`;
+        }
+
+        if (body) {
+          if (isJsonBody) {
+            code += `,\n    data: ${JSON.stringify(parsedJsonBody, null, 2).replace(/\n/g, '\n    ')}`;
+          } else {
+            code += `,\n    data: ${JSON.stringify(body)}`;
+          }
+        }
+
+        code += `\n  };\n\n  try {\n    const response = await axios(config);\n    console.log(response.data);\n  } catch (error) {\n    console.error("Axios error:", error);\n  }\n}\n\nsendAxiosRequest();`;
+        return code;
+      }
+
+      return '';
+    }
+
+    function renderGeneratedCode(parsed) {
+      const code = generateJsCode(parsed, activeFormat);
+      const output = document.getElementById('fetchOutput');
+      output.value = code;
+
+      const lines = code.split('\n').length;
+      document.getElementById('charCountDisplay').innerText = `${lines} lines (${code.length} chars)`;
+    }
+
+    function processCurl(raw) {
+      const status = document.getElementById('statusText');
+      const validationBadge = document.getElementById('validationBadge');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const output = document.getElementById('fetchOutput');
+
+      if (!raw.trim()) {
+        currentParsed = null;
+        output.value = '';
+        status.innerText = 'Upload cURL file or paste command below';
+        validationBadge.innerText = 'Waiting for cURL input...';
+        validationBadge.className = 'text-slate-400';
+        document.getElementById('charCountDisplay').innerText = '0 lines';
+        downloadBtn.disabled = true;
+        resetBtn.disabled = true;
+        return;
+      }
+
+      resetBtn.disabled = false;
+
+      try {
+        currentParsed = parseCurlCommand(raw);
+        renderGeneratedCode(currentParsed);
+
+        validationBadge.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Parsed ${currentParsed.method}</span>`;
+        status.innerText = `cURL converted to ${activeFormat.toUpperCase()}!`;
+        downloadBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        currentParsed = null;
+        output.value = '';
+        validationBadge.innerHTML = `<span class="text-red-500 font-bold"><i class="fa-solid fa-circle-xmark mr-1"></i>Parsing error</span>`;
+        status.innerText = 'Malformed cURL syntax';
+        downloadBtn.disabled = true;
+      }
+    }
+
+    function handleInput(val) {
+      processCurl(val);
+    }
+
+    // 1. Upload File Handler
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = `Reading ${file.name}...`;
+
+      try {
+        originalFileName = file.name.replace(/\.[^/.]+$/, "") + '-fetch.js';
+        const text = await file.text();
+        document.getElementById('curlInput').value = text;
+        processCurl(text);
+        status.innerText = `Loaded ${file.name} successfully!`;
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Could not read file.';
+      }
+
+      event.target.value = '';
+    }
+
+    // Quick Test Sample cURL
+    function loadSampleCurl() {
+      const sample = `curl -X POST https://api.freezip-tools.com/v1/process \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer fz_live_sec_994821" \\
+  -d '{"task": "convert", "format": "zip", "priority": "high", "async": true}'`;
+
+      originalFileName = 'sample-fetch.js';
+      document.getElementById('curlInput').value = sample;
+      processCurl(sample);
+    }
+
+    // Copy to Clipboard
+    function copyFetchCode() {
+      const output = document.getElementById('fetchOutput');
+      if (!output.value.trim()) return;
+
+      const tempArea = document.createElement('textarea');
+      tempArea.value = output.value;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        const copyBtnText = document.getElementById('copyBtnText');
+        copyBtnText.innerText = 'Copied!';
+        setTimeout(() => {
+          copyBtnText.innerText = 'Copy';
+        }, 1800);
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    // 2. Download Generated JavaScript File
+    function downloadResultFile() {
+      const output = document.getElementById('fetchOutput');
+      const val = output.value;
+      if (!val.trim()) return;
+
+      const blob = new Blob([val], { type: 'text/javascript;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = originalFileName.endsWith('.js') ? originalFileName : `${originalFileName}.js`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = `Downloaded ${a.download}!`;
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      currentParsed = null;
+      originalFileName = 'fetch-request.js';
+      document.getElementById('curlInput').value = '';
+      document.getElementById('fetchOutput').value = '';
+      document.getElementById('statusText').innerText = 'Upload cURL file or paste command below';
+      document.getElementById('validationBadge').innerText = 'Waiting for cURL input...';
+      document.getElementById('validationBadge').className = 'text-slate-400';
+      document.getElementById('charCountDisplay').innerText = '0 lines';
+      document.getElementById('downloadBtn').disabled = true;
+      document.getElementById('resetBtn').disabled = true;
+      setFormat('async');
+    }
+
+    // Minimal Theme Switcher
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>
