@@ -6,14 +6,14 @@ const CATEGORIES_DATA = [
     title: "PDF & Document Tools",
     badge: "Pdf",
     tools: [
-      { name: "Merge PDF", color: "#E11D48", icon: "fa-solid fa-object-group", url: "tools/freezip_tools_merge_pdf.html" },
-      { name: "Split PDF", color: "#EF4444", icon: "fa-solid fa-scissors", url: "tools/freezip_tools_merge_pdf.html" },
-      { name: "Compress PDF", color: "#F43F5E", icon: "fa-solid fa-file-zipper", url: "" },
-      { name: "PDF to Word", color: "#FB7185", icon: "fa-solid fa-file-word", url: "tools/freezip_tools_merge_pdf.html" },
-      { name: "Word to PDF", color: "#EA580C", icon: "fa-solid fa-file-lines", url: "tools/freezip_tools_merge_pdf.html" },
-      { name: "PDF to Image", color: "#F97316", icon: "fa-solid fa-file-image", url: "tools/freezip_tools_merge_pdf.html" },
-      { name: "Protect PDF", color: "#FB923C", icon: "fa-solid fa-lock", url: "tools/freezip_tools_merge_pdf.html" },
-      { name: "Sign PDF", color: "#D97706", icon: "fa-solid fa-signature",  }
+      { name: "Merge PDF", color: "#E11D48", icon: "fa-solid fa-object-group", url: "tools/PDF Dacumentation/freezip_merge_pdf.html" },
+      { name: "Split PDF", color: "#EF4444", icon: "fa-solid fa-scissors", url: "tools/PDF Dacumentation/freezip_split_pdf.html" },
+      { name: "Compress PDF", color: "#F43F5E", icon: "fa-solid fa-file-zipper", url: "tools/PDF Dacumentation/freezip_compress_pdf.html" },
+      { name: "PDF to Word", color: "#FB7185", icon: "fa-solid fa-file-word", url: "tools/PDF Dacumentation/freezip_pdf_to_word.html" },
+      { name: "Word to PDF", color: "#EA580C", icon: "fa-solid fa-file-lines", url: "tools/PDF Dacumentation/freezip_word_to_pdf.html" },
+      { name: "PDF to Image", color: "#F97316", icon: "fa-solid fa-file-image", url: "tools/PDF Dacumentation/freezip_pdf_to_image.html" },
+      { name: "Protect PDF", color: "#FB923C", icon: "fa-solid fa-lock", url: "tools/PDF Dacumentation/freezip_protect_pdf.html" },
+      { name: "Sign PDF", color: "#D97706", icon: "fa-solid fa-signature", url: "tools/PDF Dacumentation/freezip_sign_pdf.html"  }
     ]
   },
   {

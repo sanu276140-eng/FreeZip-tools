@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Compress PDF — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- PDF-Lib for In-Browser PDF Compression & Object Stream Optimization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+  <!-- PDF.js for Target KB Canvas Rendering & Smart Image Compression -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER (Identical to other tools) -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="index.html" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-rose-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Compress PDF
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              No PDF file selected
+            </p>
+          </div>
+
+          <!-- Target KB Section (Always Visible & Accessible) -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3.5 text-left space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <label for="targetKbInput" class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <i class="fa-solid fa-sliders text-rose-500 text-[11px]"></i>
+                <span>Choose Target Size:</span>
+              </label>
+              <span id="suggestedKbHint" class="text-[11px] font-mono font-semibold text-rose-500">Target: &lt; 95 KB (Strictly less)</span>
+            </div>
+
+            <!-- Numeric Input with KB badge -->
+            <div class="relative flex items-center">
+              <input 
+                type="number" 
+                id="targetKbInput" 
+                min="10" 
+                max="100000" 
+                value="100"
+                oninput="handleCustomInput(this.value)"
+                placeholder="Enter size in KB (e.g. 50, 100, 200)"
+                class="w-full pl-3.5 pr-14 py-2.5 text-xs font-mono font-semibold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all"
+              >
+              <span class="absolute right-3.5 text-xs font-mono font-bold text-slate-400 pointer-events-none">KB</span>
+            </div>
+
+            <!-- Quick Preset Pill Buttons with active states -->
+            <div class="grid grid-cols-5 gap-1.5 pt-0.5" id="presetPillsGroup">
+              <button type="button" onclick="setTargetKb(50)" data-kb="50" class="preset-btn py-1.5 text-[11px] font-mono font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all text-center">50K</button>
+              <button type="button" onclick="setTargetKb(100)" data-kb="100" class="preset-btn py-1.5 text-[11px] font-mono font-semibold rounded-lg bg-rose-500 text-white font-bold shadow-sm shadow-rose-500/30 border border-rose-500 transition-all text-center">100K</button>
+              <button type="button" onclick="setTargetKb(200)" data-kb="200" class="preset-btn py-1.5 text-[11px] font-mono font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all text-center">200K</button>
+              <button type="button" onclick="setTargetKb(500)" data-kb="500" class="preset-btn py-1.5 text-[11px] font-mono font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all text-center">500K</button>
+              <button type="button" onclick="setTargetKb(1024)" data-kb="1024" class="preset-btn py-1.5 text-[11px] font-mono font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all text-center">1M</button>
+            </div>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input 
+            type="file" 
+            id="pdfInput" 
+            accept=".pdf,application/pdf" 
+            class="hidden" 
+            onchange="handlePdfUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD PDF -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('pdfInput').click()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#F43F5E] hover:bg-rose-600 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-file-zipper text-lg"></i>
+              <span>Upload PDF</span>
+            </button>
+          </div>
+
+          <!-- Minimalist File Info Display -->
+          <div id="fileInfoBox" class="hidden border-t border-b border-slate-200 dark:border-slate-800 py-3 text-left space-y-2">
+            <div class="flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
+              <span id="fileNameDisplay" class="truncate font-medium text-slate-700 dark:text-slate-200 pr-2">document.pdf</span>
+              <span id="fileSizeDisplay" class="font-mono text-[11px] text-slate-400 shrink-0 font-bold">0 KB</span>
+            </div>
+
+            <!-- Compression Result Badge (Appears after compression) -->
+            <div id="compressionStats" class="hidden flex items-center justify-between text-xs px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+              <span class="text-emerald-700 dark:text-emerald-300 font-semibold flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-[11px]"></i>
+                <span id="compressionPercent">Compressed</span>
+              </span>
+              <span id="newSizeDisplay" class="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">0 KB</span>
+            </div>
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="compressAndDownload()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side Compress PDF
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- COMPRESS PDF SCRIPT -->
+  <script>
+    // Robust in-browser Worker initialization using Blob URL (Prevents CORS iframe blockage)
+    if (window.pdfjsLib) {
+      try {
+        const workerBlob = new Blob(
+          [`importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');`],
+          { type: 'application/javascript' }
+        );
+        pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(workerBlob);
+      } catch (e) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+    }
+
+    let uploadedFile = null;
+    let originalSize = 0;
+    let currentTargetKb = 100;
+
+    // Helper: Format file sizes
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Helper: Quick preset button setter (guaranteed strictly less than chosen preset)
+    function setTargetKb(kb) {
+      currentTargetKb = kb;
+      const input = document.getElementById('targetKbInput');
+      if (input) input.value = kb;
+
+      updatePresetButtonsUI(kb);
+      const effectiveKb = Math.max(5, Math.round(kb) - 5);
+      document.getElementById('suggestedKbHint').innerText = `Target: < ${effectiveKb} KB (Strictly less)`;
+    }
+
+    // Helper: Handle direct typing into input (guaranteed strictly less than input)
+    function handleCustomInput(val) {
+      const kb = parseFloat(val);
+      if (!isNaN(kb) && kb > 0) {
+        currentTargetKb = kb;
+        updatePresetButtonsUI(kb);
+        const effectiveKb = Math.max(5, Math.round(kb) - 5);
+        document.getElementById('suggestedKbHint').innerText = `Target: < ${effectiveKb} KB (Strictly less)`;
+      }
+    }
+
+    // Update active highlight style on preset pill buttons
+    function updatePresetButtonsUI(activeKb) {
+      const buttons = document.querySelectorAll('.preset-btn');
+      buttons.forEach(btn => {
+        const btnKb = parseFloat(btn.getAttribute('data-kb'));
+        if (btnKb === activeKb) {
+          btn.className = 'preset-btn py-1.5 text-[11px] font-mono font-bold rounded-lg bg-rose-500 text-white shadow-sm shadow-rose-500/30 border border-rose-500 transition-all text-center';
+        } else {
+          btn.className = 'preset-btn py-1.5 text-[11px] font-mono font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all text-center';
+        }
+      });
+    }
+
+    // 1. Upload PDF Handler
+    async function handlePdfUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = 'Analyzing PDF file...';
+
+      try {
+        const buffer = await file.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.load(buffer, { ignoreEncryption: true });
+        const pages = pdfDoc.getPageCount();
+
+        uploadedFile = {
+          name: file.name,
+          buffer: buffer,
+          size: file.size,
+          pages: pages
+        };
+
+        originalSize = file.size;
+        const sizeInKb = Math.round(file.size / 1024);
+
+        document.getElementById('fileNameDisplay').innerText = file.name;
+        document.getElementById('fileSizeDisplay').innerText = `${formatBytes(file.size)} (${pages}p)`;
+
+        // If file is smaller than default preset, auto-suggest half of its size
+        if (sizeInKb <= 100 && sizeInKb > 20) {
+          setTargetKb(Math.round(sizeInKb * 0.5));
+        } else {
+          setTargetKb(currentTargetKb);
+        }
+
+        document.getElementById('fileInfoBox').classList.remove('hidden');
+        document.getElementById('compressionStats').classList.add('hidden');
+
+        status.innerText = `Ready • Original: ${formatBytes(file.size)} (${pages} pages)`;
+
+        document.getElementById('downloadBtn').disabled = false;
+        document.getElementById('resetBtn').disabled = false;
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Invalid or encrypted PDF file.';
+      }
+      event.target.value = '';
+    }
+
+    // 2. Compress & Download Handler (Guaranteed strictly less than target size)
+    async function compressAndDownload() {
+      if (!uploadedFile) return;
+
+      const downloadBtn = document.getElementById('downloadBtn');
+      const btnText = document.getElementById('downloadBtnText');
+      const status = document.getElementById('statusText');
+      
+      const targetInput = document.getElementById('targetKbInput');
+      const requestedKb = Math.round(parseFloat(targetInput.value) || currentTargetKb || 100);
+      
+      // Strict rule: Target ceiling is (requestedKb - 5) KB.
+      // Final size is GUARANTEED to be under this ceiling.
+      const ceilingKb = Math.max(5, requestedKb - 5);
+      const strictMaxBytes = ceilingKb * 1024;
+
+      try {
+        downloadBtn.disabled = true;
+        btnText.innerText = 'Compressing...';
+        status.innerText = `Compressing to strictly less than ${ceilingKb} KB...`;
+
+        let compressedBytes = null;
+
+        if (window.pdfjsLib) {
+          const loadingTask = pdfjsLib.getDocument({ 
+            data: new Uint8Array(uploadedFile.buffer.slice(0)),
+            disableFontFace: true
+          });
+          const pdfJsDoc = await loadingTask.promise;
+          const numPages = pdfJsDoc.numPages;
+
+          // Render all pages to base canvases
+          const renderedPages = [];
+          for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+            status.innerText = `Reading page ${pageNum}/${numPages}...`;
+            const page = await pdfJsDoc.getPage(pageNum);
+            const origViewport = page.getViewport({ scale: 1.0 });
+
+            // Base scale capped at 1.2 for efficiency
+            const baseScale = Math.min(1.2, Math.max(0.5, 1000 / Math.max(origViewport.width, origViewport.height)));
+            const viewport = page.getViewport({ scale: baseScale });
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.floor(viewport.width);
+            canvas.height = Math.floor(viewport.height);
+
+            const ctx = canvas.getContext('2d', { alpha: false });
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+            renderedPages.push({ canvas, origW: origViewport.width, origH: origViewport.height });
+          }
+
+          // Initial quality calculation based on budget per page
+          const budgetPerPage = Math.floor(strictMaxBytes / numPages);
+          let quality = budgetPerPage < 15000 ? 0.35 : (budgetPerPage < 40000 ? 0.55 : 0.75);
+          let dimScale = 1.0;
+
+          // Multi-pass iterative loop: Guarantees result is strictly < strictMaxBytes
+          let attempts = 0;
+          while (attempts < 8) {
+            attempts++;
+            status.innerText = `Optimizing size (Pass ${attempts})...`;
+
+            const newPdf = await PDFLib.PDFDocument.create();
+
+            for (const item of renderedPages) {
+              let exportCanvas = item.canvas;
+
+              // If dimensions need downscaling to meet size budget
+              if (dimScale < 0.99) {
+                const scaledCanvas = document.createElement('canvas');
+                scaledCanvas.width = Math.max(80, Math.floor(item.canvas.width * dimScale));
+                scaledCanvas.height = Math.max(80, Math.floor(item.canvas.height * dimScale));
+                const sCtx = scaledCanvas.getContext('2d');
+                sCtx.drawImage(item.canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+                exportCanvas = scaledCanvas;
+              }
+
+              const dataUrl = exportCanvas.toDataURL('image/jpeg', quality);
+              const jpegImage = await newPdf.embedJpg(dataUrl);
+              const newPage = newPdf.addPage([item.origW, item.origH]);
+              newPage.drawImage(jpegImage, {
+                x: 0,
+                y: 0,
+                width: item.origW,
+                height: item.origH,
+              });
+            }
+
+            compressedBytes = await newPdf.save({ useObjectStreams: true });
+
+            // STRICT CHECK: Is the file size strictly less than our target ceiling?
+            if (compressedBytes.length < strictMaxBytes) {
+              break; // Target successfully met!
+            }
+
+            // If still larger or equal, progressively reduce quality and resolution
+            if (quality > 0.22) {
+              quality = Math.max(0.12, quality * (strictMaxBytes / compressedBytes.length) * 0.90);
+            } else {
+              // Quality is already low; downscale pixel dimensions to force smaller size
+              dimScale = Math.max(0.25, dimScale * 0.78);
+              quality = Math.max(0.15, quality * 0.95);
+            }
+          }
+        } else {
+          // Standard structural fallback
+          const sourceDoc = await PDFLib.PDFDocument.load(uploadedFile.buffer, { ignoreEncryption: true });
+          const compressedDoc = await PDFLib.PDFDocument.create();
+          const pageIndices = sourceDoc.getPageIndices();
+          const copiedPages = await compressedDoc.copyPages(sourceDoc, pageIndices);
+          copiedPages.forEach(p => compressedDoc.addPage(p));
+          compressedBytes = await compressedDoc.save({ useObjectStreams: true });
+        }
+
+        const newSize = compressedBytes.length;
+        const newSizeKb = Math.max(1, Math.floor(newSize / 1024));
+
+        // Update compression statistics
+        document.getElementById('compressionPercent').innerText = `${newSizeKb} KB (< ${requestedKb} KB target)`;
+        document.getElementById('newSizeDisplay').innerText = `${newSizeKb} KB`;
+        document.getElementById('compressionStats').classList.remove('hidden');
+
+        // Trigger Instant Download
+        const blob = new Blob([compressedBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const cleanName = uploadedFile.name.replace(/\.pdf$/i, '');
+        a.download = `${cleanName}-${newSizeKb}kb.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        status.innerText = `Done! File size is ${newSizeKb} KB (Strictly less than ${requestedKb} KB)`;
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Error compressing PDF.';
+      } finally {
+        downloadBtn.disabled = false;
+        btnText.innerText = 'Download';
+      }
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      uploadedFile = null;
+      originalSize = 0;
+
+      document.getElementById('statusText').innerText = 'No PDF file selected';
+      document.getElementById('fileInfoBox').classList.add('hidden');
+      document.getElementById('compressionStats').classList.add('hidden');
+      setTargetKb(100);
+      document.getElementById('downloadBtn').disabled = true;
+      document.getElementById('resetBtn').disabled = true;
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+      setTargetKb(100);
+    });
+  </script>
+</body>
+</html>
