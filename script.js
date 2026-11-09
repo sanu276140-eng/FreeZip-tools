@@ -37,13 +37,13 @@ const CATEGORIES_DATA = [
     badge: "Design",
     tools: [
       { name: "Color Palette", color: "#4F46E5", icon: "fa-solid fa-palette", url: "tools/Design Styling/color_palette.html" },
-      { name: "CSS Gradient", color: "#6366F1", icon: "fa-solid fa-fill-drip", url: "tools/Design Styling/" },
-      { name: "Box Shadow", color: "#818CF8", icon: "fa-solid fa-cube", url: "tools/Design Styling/" },
-      { name: "Glassmorphism", color: "#7C3AED", icon: "fa-solid fa-wand-magic-sparkles", url: "tools/Design Styling/" },
-      { name: "Border Radius", color: "#8B5CF6", icon: "fa-solid fa-draw-polygon", url: "tools/Design Styling/" },
-      { name: "SVG Optimizer", color: "#A855F7", icon: "fa-solid fa-bezier-curve", url: "tools/Design Styling/" },
-      { name: "Color Contrast", color: "#9333EA", icon: "fa-solid fa-circle-half-stroke", url: "tools/Design Styling/" },
-      { name: "Favicon Maker", color: "#C026D3", icon: "fa-solid fa-star", url: "tools/Design Styling/" }
+      { name: "CSS Gradient", color: "#6366F1", icon: "fa-solid fa-fill-drip", url: "tools/Design Styling/css_gradient_generator.html" },
+      { name: "Box Shadow", color: "#818CF8", icon: "fa-solid fa-cube", url: "tools/Design Styling/box_shadow_generator.html" },
+      { name: "Glassmorphism", color: "#7C3AED", icon: "fa-solid fa-wand-magic-sparkles", url: "tools/Design Styling/glassmorphism_generator.html" },
+      { name: "Border Radius", color: "#8B5CF6", icon: "fa-solid fa-draw-polygon", url: "tools/Design Styling/border_radius_generator.html" },
+      { name: "SVG Optimizer", color: "#A855F7", icon: "fa-solid fa-bezier-curve", url: "tools/Design Styling/svg_optimizer.html" },
+      { name: "Color Contrast", color: "#9333EA", icon: "fa-solid fa-circle-half-stroke", url: "tools/Design Styling/color_contrast.html" },
+      { name: "Favicon Maker", color: "#C026D3", icon: "fa-solid fa-star", url: "tools/Design Styling/favicon_maker.html" }
     ]
   },
   {
@@ -51,14 +51,14 @@ const CATEGORIES_DATA = [
     title: "Security & Cryptography",
     badge: "Secure",
     tools: [
-      { name: "SHA-256 Hash", color: "#15803D", icon: "fa-solid fa-fingerprint" },
-      { name: "MD5 Generator", color: "#16A34A", icon: "fa-solid fa-shield" },
-      { name: "Password Maker", color: "#22C55E", icon: "fa-solid fa-shield-halved" },
-      { name: "UUID Gen v4", color: "#10B981", icon: "fa-solid fa-barcode" },
-      { name: "JWT Inspector", color: "#059669", icon: "fa-solid fa-id-card" },
-      { name: "Bcrypt Salt", color: "#84CC16", icon: "fa-solid fa-user-lock" },
-      { name: "RSA Key Pair", color: "#65A30D", icon: "fa-solid fa-vault" },
-      { name: "HTPASSWD Gen", color: "#4D7C0F", icon: "fa-solid fa-server" }
+      { name: "SHA-256 Hash", color: "#15803D", icon: "fa-solid fa-fingerprint", url: "tools/Security Cryptography/sha_256_hash_generator.html" },
+      { name: "MD5 Generator", color: "#16A34A", icon: "fa-solid fa-shield", url: "tools/Security Cryptography/md5_generator.html"  },
+      { name: "Password Maker", color: "#22C55E", icon: "fa-solid fa-shield-halved", url: "tools/Security Cryptography/password_maker.html"  },
+      { name: "UUID Gen v4", color: "#10B981", icon: "fa-solid fa-barcode", url: "tools/Security Cryptography/uuid_gen_v4.html"  },
+      { name: "JWT Inspector", color: "#059669", icon: "fa-solid fa-id-card", url: "tools/Security Cryptography/jwt_inspector.html"  },
+      { name: "Bcrypt Salt", color: "#84CC16", icon: "fa-solid fa-user-lock", url: "tools/Security Cryptography/bcrypt_salt.html"  },
+      { name: "RSA Key Pair", color: "#65A30D", icon: "fa-solid fa-vault", url: "tools/Security Cryptography/rsa_key_pair.html"  },
+      { name: "HTPASSWD Gen", color: "#4D7C0F", icon: "fa-solid fa-server", url: "tools/Security Cryptography/htpasswd_generator.html"  }
     ]
   },
   {

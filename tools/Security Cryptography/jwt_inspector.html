@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>JWT Inspector — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    textarea {
+      tab-size: 2;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="index.html" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              JWT Inspector
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Inspect, decode & verify JSON Web Tokens in real time
+            </p>
+          </div>
+
+          <!-- Hidden File Input for Token File Upload -->
+          <input 
+            type="file" 
+            id="jwtFileInput" 
+            accept=".jwt,.txt,text/plain" 
+            class="hidden" 
+            onchange="handleFileUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD JWT / TOKEN (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('jwtFileInput').click()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-id-card text-lg"></i>
+              <span>Upload JWT / Token File</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Interactive JWT Studio Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3.5">
+            
+            <!-- SECTION 1: Encoded JWT Input with Samples -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px] flex items-center gap-1.5">
+                  <i class="fa-solid fa-key text-red-500 text-[10px]"></i>
+                  <span>Encoded Token:</span>
+                </span>
+                
+                <!-- Quick Sample Helpers -->
+                <div class="flex items-center gap-2 font-mono text-[10px]">
+                  <button type="button" onclick="loadSampleJwt('active')" class="font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                    Sample
+                  </button>
+                  <span class="text-slate-300 dark:text-slate-700">&bull;</span>
+                  <button type="button" onclick="loadSampleJwt('expired')" class="font-semibold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+                    Expired
+                  </button>
+                </div>
+              </div>
+
+              <!-- Encoded JWT Textarea -->
+              <textarea 
+                id="jwtInput"
+                rows="3"
+                oninput="handleJwtInput(this.value)"
+                placeholder="Paste your JWT token here (header.payload.signature)..."
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors resize-y leading-relaxed break-all select-all"
+                spellcheck="false"
+              ></textarea>
+            </div>
+
+            <!-- Live Status & Expiration Summary Card -->
+            <div id="jwtMetaCard" class="hidden p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span id="tokenStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                  <span id="tokenStatusText" class="font-bold text-emerald-600 dark:text-emerald-400">Token Valid</span>
+                </div>
+                <span id="algBadge" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                  HS256
+                </span>
+              </div>
+
+              <!-- Time / Expiration Details -->
+              <div class="grid grid-cols-2 gap-2 text-[10px] text-slate-500 dark:text-slate-400 pt-0.5 border-t border-slate-200/80 dark:border-slate-800/80">
+                <div>
+                  <span class="block text-slate-400">Issued At (iat):</span>
+                  <span id="iatDisplay" class="font-bold text-slate-700 dark:text-slate-300">--</span>
+                </div>
+                <div>
+                  <span class="block text-slate-400">Expires At (exp):</span>
+                  <span id="expDisplay" class="font-bold text-slate-700 dark:text-slate-300">--</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2: Decoded Header with Dedicated Working Copy Button -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-rose-600 dark:text-rose-400 font-mono text-[11px] flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <span>Header: Algorithm & Type</span>
+                </span>
+
+                <!-- Dedicated Working Copy Button -->
+                <button 
+                  type="button" 
+                  id="copyHeaderBtn"
+                  onclick="copySection('header')"
+                  title="Copy Header JSON"
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+                >
+                  <i id="copyHeaderIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyHeaderText">Copy Header</span>
+                </button>
+              </div>
+
+              <!-- Header JSON Textarea -->
+              <textarea 
+                id="headerOutput"
+                rows="3"
+                readonly
+                placeholder="{ &quot;alg&quot;: &quot;HS256&quot;, &quot;typ&quot;: &quot;JWT&quot; }"
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-rose-200 dark:border-rose-950/60 bg-rose-50/50 dark:bg-rose-950/20 text-rose-900 dark:text-rose-300 focus:outline-none resize-none leading-relaxed select-all"
+              ></textarea>
+            </div>
+
+            <!-- SECTION 3: Decoded Payload with Dedicated Working Copy Button -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-purple-600 dark:text-purple-400 font-mono text-[11px] flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                  <span>Payload: Data & Claims</span>
+                </span>
+
+                <!-- Dedicated Working Copy Button -->
+                <button 
+                  type="button" 
+                  id="copyPayloadBtn"
+                  onclick="copySection('payload')"
+                  title="Copy Payload JSON"
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+                >
+                  <i id="copyPayloadIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyPayloadText">Copy Payload</span>
+                </button>
+              </div>
+
+              <!-- Payload JSON Textarea -->
+              <textarea 
+                id="payloadOutput"
+                rows="5"
+                readonly
+                placeholder="{ &quot;sub&quot;: &quot;1234567890&quot;, &quot;name&quot;: &quot;User&quot;, &quot;iat&quot;: 1516239022 }"
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-purple-200 dark:border-purple-950/60 bg-purple-50/50 dark:bg-purple-950/20 text-purple-900 dark:text-purple-300 focus:outline-none resize-y leading-relaxed select-all"
+              ></textarea>
+            </div>
+
+            <!-- SECTION 4: Signature & In-Browser HMAC-SHA256 Secret Verifier -->
+            <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-cyan-600 dark:text-cyan-400 font-mono text-[11px] flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                  <span>Signature & Secret Verification:</span>
+                </span>
+
+                <!-- Dedicated Working Copy Button for Signature -->
+                <button 
+                  type="button" 
+                  id="copySigBtn"
+                  onclick="copySection('signature')"
+                  title="Copy Raw Signature"
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+                >
+                  <i id="copySigIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copySigText">Copy Sig</span>
+                </button>
+              </div>
+
+              <!-- Raw Signature Input Display -->
+              <input 
+                type="text" 
+                id="signatureOutput" 
+                readonly 
+                placeholder="raw-signature-hash"
+                class="w-full p-2 text-xs font-mono rounded-lg border border-cyan-200 dark:border-cyan-950/60 bg-cyan-50/40 dark:bg-cyan-950/20 text-cyan-900 dark:text-cyan-300 focus:outline-none select-all truncate"
+              >
+
+              <!-- Optional HMAC Secret Verification Field -->
+              <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-1.5 font-mono text-[11px]">
+                <div class="flex items-center justify-between text-[10px]">
+                  <span class="text-slate-500 font-semibold">Verify HS256 Secret Key:</span>
+                  <span id="sigVerifyStatusBadge" class="text-slate-400">Optional</span>
+                </div>
+                <input 
+                  type="text" 
+                  id="secretKeyInput" 
+                  oninput="handleSecretKeyChange(this.value)"
+                  placeholder="Enter secret (e.g. secret123)..."
+                  class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500 transition-colors"
+                >
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadDecodedToken()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download (.json)</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side JWT Inspector & Crypto Verifier
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- JWT INSPECTOR JAVASCRIPT LOGIC -->
+  <script>
+    let currentDecoded = null;
+    let rawJwtString = '';
+
+    // Standard UTF-8 Base64URL Decoder
+    function base64UrlDecode(str) {
+      let output = str.replace(/-/g, '+').replace(/_/g, '/');
+      switch (output.length % 4) {
+        case 0: break;
+        case 2: output += '=='; break;
+        case 3: output += '='; break;
+        default: throw new Error('Illegal base64url string length');
+      }
+
+      const binaryStr = atob(output);
+      const bytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+      }
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+
+    // Standard UTF-8 Base64URL Encoder
+    function base64UrlEncode(bytes) {
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    // Format epoch timestamp into readable local time and relative difference
+    function formatEpoch(epochSeconds) {
+      if (!epochSeconds || isNaN(epochSeconds)) return 'N/A';
+      const date = new Date(epochSeconds * 1000);
+      const now = Date.now();
+      const diffMs = (epochSeconds * 1000) - now;
+      const isPast = diffMs < 0;
+
+      const absDiffSec = Math.floor(Math.abs(diffMs) / 1000);
+      const days = Math.floor(absDiffSec / 86400);
+      const hours = Math.floor((absDiffSec % 86400) / 3600);
+      const minutes = Math.floor((absDiffSec % 3600) / 60);
+
+      let relativeStr = '';
+      if (days > 0) relativeStr = `${days}d ${hours}h ${isPast ? 'ago' : 'left'}`;
+      else if (hours > 0) relativeStr = `${hours}h ${minutes}m ${isPast ? 'ago' : 'left'}`;
+      else relativeStr = `${minutes}m ${isPast ? 'ago' : 'left'}`;
+
+      const dateStr = date.toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return `${dateStr} (${relativeStr})`;
+    }
+
+    // Core JWT Parser & Decoder
+    function parseJwt(token) {
+      const parts = token.trim().split('.');
+      if (parts.length !== 3) {
+        throw new Error('JWT must have 3 parts separated by dots (header.payload.signature)');
+      }
+
+      const headerJsonStr = base64UrlDecode(parts[0]);
+      const payloadJsonStr = base64UrlDecode(parts[1]);
+
+      const header = JSON.parse(headerJsonStr);
+      const payload = JSON.parse(payloadJsonStr);
+      const signature = parts[2];
+
+      return {
+        header,
+        payload,
+        signature,
+        headerRaw: parts[0],
+        payloadRaw: parts[1],
+        headerStr: JSON.stringify(header, null, 2),
+        payloadStr: JSON.stringify(payload, null, 2)
+      };
+    }
+
+    // Handle Input change
+    function handleJwtInput(val) {
+      rawJwtString = val.trim();
+      const statusText = document.getElementById('statusText');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const metaCard = document.getElementById('jwtMetaCard');
+
+      if (!rawJwtString) {
+        currentDecoded = null;
+        document.getElementById('headerOutput').value = '';
+        document.getElementById('payloadOutput').value = '';
+        document.getElementById('signatureOutput').value = '';
+        metaCard.classList.add('hidden');
+        statusText.innerText = 'Inspect, decode & verify JSON Web Tokens in real time';
+        downloadBtn.disabled = true;
+        document.getElementById('sigVerifyStatusBadge').innerText = 'Optional';
+        document.getElementById('sigVerifyStatusBadge').className = 'text-slate-400';
+        return;
+      }
+
+      try {
+        currentDecoded = parseJwt(rawJwtString);
+
+        // Update displays
+        document.getElementById('headerOutput').value = currentDecoded.headerStr;
+        document.getElementById('payloadOutput').value = currentDecoded.payloadStr;
+        document.getElementById('signatureOutput').value = currentDecoded.signature;
+
+        // Render Metadata and Claims
+        renderTokenMetadata(currentDecoded);
+        metaCard.classList.remove('hidden');
+
+        // Check HMAC verification if secret is already typed
+        const secretInput = document.getElementById('secretKeyInput').value;
+        if (secretInput) {
+          verifyHmacSignature(secretInput);
+        } else {
+          document.getElementById('sigVerifyStatusBadge').innerText = 'Optional';
+          document.getElementById('sigVerifyStatusBadge').className = 'text-slate-400';
+        }
+
+        statusText.innerText = 'JWT successfully decoded!';
+        downloadBtn.disabled = false;
+      } catch (err) {
+        currentDecoded = null;
+        document.getElementById('headerOutput').value = '';
+        document.getElementById('payloadOutput').value = '';
+        document.getElementById('signatureOutput').value = '';
+        metaCard.classList.add('hidden');
+        statusText.innerText = `Invalid JWT: ${err.message}`;
+        downloadBtn.disabled = true;
+      }
+    }
+
+    // Render metadata & expiration badges
+    function renderTokenMetadata(decoded) {
+      const algBadge = document.getElementById('algBadge');
+      const tokenStatusDot = document.getElementById('tokenStatusDot');
+      const tokenStatusText = document.getElementById('tokenStatusText');
+      const iatDisplay = document.getElementById('iatDisplay');
+      const expDisplay = document.getElementById('expDisplay');
+
+      algBadge.innerText = decoded.header.alg || 'None';
+
+      // Issued At (iat)
+      if (decoded.payload.iat) {
+        iatDisplay.innerText = formatEpoch(decoded.payload.iat);
+      } else {
+        iatDisplay.innerText = 'Not specified';
+      }
+
+      // Expiration (exp)
+      if (decoded.payload.exp) {
+        const isExpired = Date.now() >= decoded.payload.exp * 1000;
+        expDisplay.innerText = formatEpoch(decoded.payload.exp);
+
+        if (isExpired) {
+          tokenStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+          tokenStatusText.innerText = 'Token Expired';
+          tokenStatusText.className = 'font-bold text-rose-500';
+        } else {
+          tokenStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+          tokenStatusText.innerText = 'Token Active';
+          tokenStatusText.className = 'font-bold text-emerald-600 dark:text-emerald-400';
+        }
+      } else {
+        expDisplay.innerText = 'Never / No exp claim';
+        tokenStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-blue-500';
+        tokenStatusText.innerText = 'No Expiration Set';
+        tokenStatusText.className = 'font-bold text-blue-500';
+      }
+    }
+
+    // In-browser Web Crypto API HMAC-SHA256 Signature Verification
+    async function verifyHmacSignature(secret) {
+      const badge = document.getElementById('sigVerifyStatusBadge');
+      if (!currentDecoded || !secret) {
+        badge.innerText = 'Optional';
+        badge.className = 'text-slate-400';
+        return;
+      }
+
+      if (currentDecoded.header.alg !== 'HS256') {
+        badge.innerText = `Cannot verify ${currentDecoded.header.alg || 'unknown'} (Only HS256)`;
+        badge.className = 'text-amber-500 font-semibold text-[10px]';
+        return;
+      }
+
+      try {
+        const encoder = new TextEncoder();
+        const key = await crypto.subtle.importKey(
+          'raw',
+          encoder.encode(secret),
+          { name: 'HMAC', hash: 'SHA-256' },
+          false,
+          ['sign']
+        );
+
+        const dataToSign = `${currentDecoded.headerRaw}.${currentDecoded.payloadRaw}`;
+        const signatureBuffer = await crypto.subtle.sign('HMAC', key, encoder.encode(dataToSign));
+        const computedSignature = base64UrlEncode(new Uint8Array(signatureBuffer));
+
+        if (computedSignature === currentDecoded.signature) {
+          badge.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"><i class="fa-solid fa-check"></i> Signature Verified</span>';
+        } else {
+          badge.innerHTML = '<span class="text-rose-500 font-bold flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Invalid Secret</span>';
+        }
+      } catch (err) {
+        console.error(err);
+        badge.innerText = 'Crypto error';
+        badge.className = 'text-rose-500';
+      }
+    }
+
+    function handleSecretKeyChange(val) {
+      verifyHmacSignature(val);
+    }
+
+    // 1. Upload File Handler
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = `Reading ${file.name}...`;
+
+      try {
+        const text = await file.text();
+        document.getElementById('jwtInput').value = text.trim();
+        handleJwtInput(text.trim());
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Could not read file.';
+      }
+
+      event.target.value = '';
+    }
+
+    // Load Pre-Crafted Sample JWTs
+    function loadSampleJwt(type) {
+      const header = { alg: "HS256", typ: "JWT" };
+      const now = Math.floor(Date.now() / 1000);
+      let payload = {};
+
+      if (type === 'active') {
+        payload = {
+          sub: "usr_948210385",
+          name: "Alex Morgan",
+          email: "alex@freezip-tools.example.com",
+          role: "administrator",
+          iat: now,
+          exp: now + (3600 * 24) // +24 hours
+        };
+      } else {
+        payload = {
+          sub: "usr_expired_demo",
+          name: "Jane Doe",
+          role: "guest",
+          iat: now - (3600 * 48), // -48 hours
+          exp: now - (3600 * 24)  // expired 24h ago
+        };
+      }
+
+      const hB64 = base64UrlEncode(new TextEncoder().encode(JSON.stringify(header)));
+      const pB64 = base64UrlEncode(new TextEncoder().encode(JSON.stringify(payload)));
+
+      // Generate verified signature using secret 'secret123'
+      const secret = 'secret123';
+      const enc = new TextEncoder();
+
+      crypto.subtle.importKey(
+        'raw',
+        enc.encode(secret),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      ).then(key => {
+        return crypto.subtle.sign('HMAC', key, enc.encode(`${hB64}.${pB64}`));
+      }).then(sigBuf => {
+        const sigB64 = base64UrlEncode(new Uint8Array(sigBuf));
+        const token = `${hB64}.${pB64}.${sigB64}`;
+
+        document.getElementById('jwtInput').value = token;
+        document.getElementById('secretKeyInput').value = 'secret123';
+        handleJwtInput(token);
+        verifyHmacSignature('secret123');
+      });
+    }
+
+    // Dedicated Working Copy Button for Sections
+    function copySection(sec) {
+      let text = '';
+      let btnId = '';
+      let textId = '';
+      let iconId = '';
+
+      if (sec === 'header') {
+        text = document.getElementById('headerOutput').value;
+        btnId = 'copyHeaderBtn';
+        textId = 'copyHeaderText';
+        iconId = 'copyHeaderIcon';
+      } else if (sec === 'payload') {
+        text = document.getElementById('payloadOutput').value;
+        btnId = 'copyPayloadBtn';
+        textId = 'copyPayloadText';
+        iconId = 'copyPayloadIcon';
+      } else if (sec === 'signature') {
+        text = document.getElementById('signatureOutput').value;
+        btnId = 'copySigBtn';
+        textId = 'copySigText';
+        iconId = 'copySigIcon';
+      }
+
+      if (!text.trim()) return;
+
+      copyTextToClipboard(text);
+      const textEl = document.getElementById(textId);
+      const iconEl = document.getElementById(iconId);
+
+      const originalLabel = textEl.innerText;
+      textEl.innerText = 'Copied!';
+      iconEl.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        textEl.innerText = originalLabel;
+        iconEl.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = `Copied ${sec.toUpperCase()} to clipboard!`;
+    }
+
+    // Universal copy helper using execCommand
+    function copyTextToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.style.top = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(temp);
+    }
+
+    // 2. Download Decoded Token File (.json)
+    function downloadDecodedToken() {
+      if (!currentDecoded) return;
+
+      const outputObj = {
+        token: rawJwtString,
+        header: currentDecoded.header,
+        payload: currentDecoded.payload,
+        signature: currentDecoded.signature,
+        inspectedAt: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(outputObj, null, 2)], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'jwt-decoded.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = 'Downloaded jwt-decoded.json!';
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      currentDecoded = null;
+      rawJwtString = '';
+      document.getElementById('jwtInput').value = '';
+      document.getElementById('headerOutput').value = '';
+      document.getElementById('payloadOutput').value = '';
+      document.getElementById('signatureOutput').value = '';
+      document.getElementById('secretKeyInput').value = '';
+      document.getElementById('jwtMetaCard').classList.add('hidden');
+      document.getElementById('statusText').innerText = 'JWT Inspector reset to default';
+      document.getElementById('sigVerifyStatusBadge').innerText = 'Optional';
+      document.getElementById('sigVerifyStatusBadge').className = 'text-slate-400';
+      document.getElementById('downloadBtn').disabled = true;
+    }
+
+    // Theme Switcher Sync with localStorage
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+      loadSampleJwt('active');
+    });
+  </script>
+</body>
+</html>

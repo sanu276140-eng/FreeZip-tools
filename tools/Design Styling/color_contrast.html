@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Color Contrast — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    /* Color picker native styling */
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+    /* Checkbox & Range Sliders */
+    input[type="range"] {
+      accent-color: #E11D48;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="https://www.freezip.site/" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="https://www.freezip.site/" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Color Contrast
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              WCAG 2.1 accessibility checker for text & UI contrast
+            </p>
+          </div>
+
+          <!-- 1. MAIN BUTTON: ROLL CONTRAST PAIR (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="rollRandomPair()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-dice text-lg"></i>
+              <span>Roll Contrast Pair</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Interactive Contrast Studio Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3.5">
+            
+            <!-- Live Visual Preview Box with Text & Elements -->
+            <div 
+              id="previewStage" 
+              class="relative w-full rounded-xl p-4 transition-colors duration-200 border border-slate-200 dark:border-slate-800 shadow-inner flex flex-col gap-2.5"
+              style="background-color: #FFFFFF; color: #0F172A;"
+            >
+              <!-- Floating Swap Button in top right -->
+              <button 
+                type="button" 
+                onclick="swapColors()"
+                class="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 active:scale-95 transition-all flex items-center gap-1 shadow-xs cursor-pointer"
+                title="Swap Foreground & Background"
+              >
+                <i class="fa-solid fa-arrow-right-arrow-left text-[9px]"></i>
+                <span>Swap</span>
+              </button>
+
+              <!-- Sample Typography -->
+              <div class="space-y-1 pr-14">
+                <span class="text-[9px] font-mono uppercase tracking-wider opacity-75 font-bold block">
+                  Sample Preview
+                </span>
+                <h3 id="sampleHeading" class="text-lg sm:text-xl font-extrabold tracking-tight leading-tight">
+                  Accessible Typography
+                </h3>
+                <p id="sampleBody" class="text-xs font-medium leading-relaxed opacity-90">
+                  Good contrast ensures legibility across all screen brightness levels and protects reader vision.
+                </p>
+              </div>
+
+              <!-- Sample Component (Button & Icon) -->
+              <div class="flex items-center gap-2 pt-1">
+                <div id="sampleButton" class="px-2.5 py-1 rounded-md text-[10px] font-bold border border-current flex items-center gap-1">
+                  <i class="fa-solid fa-circle-check text-[9px]"></i>
+                  <span>Button Component</span>
+                </div>
+                <div class="text-[11px] font-mono opacity-80 flex items-center gap-1">
+                  <i class="fa-solid fa-circle-info text-[10px]"></i>
+                  <span>14pt Text</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Contrast Ratio & Overall Status Badge -->
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800">
+              <div>
+                <span class="text-[10px] font-mono text-slate-400 block font-semibold">Contrast Ratio</span>
+                <span id="ratioDisplay" class="text-2xl sm:text-3xl font-mono font-extrabold text-slate-900 dark:text-white">
+                  15.3 : 1
+                </span>
+              </div>
+              <div id="scoreBadge" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-xs"></i>
+                <span>AAA Pass</span>
+              </div>
+            </div>
+
+            <!-- WCAG 2.1 Compliance Status Grid (Normal, Large, UI) -->
+            <div class="grid grid-cols-3 gap-1.5 font-mono text-[10px]">
+              <!-- Normal Text AA (>= 4.5:1) -->
+              <div id="cardNormalAA" class="p-2 rounded-lg border text-center space-y-0.5 bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/60">
+                <span class="text-slate-500 dark:text-slate-400 block">Normal AA</span>
+                <span id="badgeNormalAA" class="font-bold text-emerald-600 dark:text-emerald-400">PASS (4.5)</span>
+              </div>
+
+              <!-- Large Text AA (>= 3.0:1) -->
+              <div id="cardLargeAA" class="p-2 rounded-lg border text-center space-y-0.5 bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/60">
+                <span class="text-slate-500 dark:text-slate-400 block">Large AA</span>
+                <span id="badgeLargeAA" class="font-bold text-emerald-600 dark:text-emerald-400">PASS (3.0)</span>
+              </div>
+
+              <!-- AAA Normal (>= 7.0:1) -->
+              <div id="cardNormalAAA" class="p-2 rounded-lg border text-center space-y-0.5 bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/60">
+                <span class="text-slate-500 dark:text-slate-400 block">Normal AAA</span>
+                <span id="badgeNormalAAA" class="font-bold text-emerald-600 dark:text-emerald-400">PASS (7.0)</span>
+              </div>
+            </div>
+
+            <!-- Color Inputs (Text & Background) with Dedicated Working Copy Buttons -->
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              
+              <!-- Foreground (Text) Color Card -->
+              <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-1.5">
+                <span class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 block">
+                  Text (Foreground):
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <input 
+                    type="color" 
+                    id="fgColorPicker" 
+                    value="#0F172A"
+                    oninput="handleColorInput('fg', this.value)"
+                    class="w-7 h-7 rounded-md border border-slate-300 dark:border-slate-700 cursor-pointer bg-transparent shrink-0"
+                    title="Choose Text Color"
+                  >
+                  <input 
+                    type="text" 
+                    id="fgTextInput" 
+                    value="#0F172A" 
+                    maxlength="7"
+                    oninput="handleTextHexChange('fg', this.value)"
+                    class="w-full px-2 py-1 text-xs font-mono font-bold rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500 uppercase"
+                  >
+                </div>
+                <!-- Dedicated Working Copy Button for Foreground -->
+                <button 
+                  type="button" 
+                  id="copyBtn_fg"
+                  onclick="copyColorHex('fg')"
+                  title="Copy text hex code"
+                  class="w-full py-1 px-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-mono font-semibold flex items-center justify-center gap-1 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer"
+                >
+                  <i id="copyIcon_fg" class="fa-regular fa-copy text-[9px]"></i>
+                  <span id="copyLabel_fg">Copy Text Hex</span>
+                </button>
+              </div>
+
+              <!-- Background Color Card -->
+              <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-1.5">
+                <span class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 block">
+                  Background:
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <input 
+                    type="color" 
+                    id="bgColorPicker" 
+                    value="#FFFFFF"
+                    oninput="handleColorInput('bg', this.value)"
+                    class="w-7 h-7 rounded-md border border-slate-300 dark:border-slate-700 cursor-pointer bg-transparent shrink-0"
+                    title="Choose Background Color"
+                  >
+                  <input 
+                    type="text" 
+                    id="bgTextInput" 
+                    value="#FFFFFF" 
+                    maxlength="7"
+                    oninput="handleTextHexChange('bg', this.value)"
+                    class="w-full px-2 py-1 text-xs font-mono font-bold rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500 uppercase"
+                  >
+                </div>
+                <!-- Dedicated Working Copy Button for Background -->
+                <button 
+                  type="button" 
+                  id="copyBtn_bg"
+                  onclick="copyColorHex('bg')"
+                  title="Copy background hex code"
+                  class="w-full py-1 px-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-mono font-semibold flex items-center justify-center gap-1 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer"
+                >
+                  <i id="copyIcon_bg" class="fa-regular fa-copy text-[9px]"></i>
+                  <span id="copyLabel_bg">Copy BG Hex</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[10px] block">Presets:</span>
+              <div class="grid grid-cols-4 gap-1.5 font-mono text-[10px]">
+                <button type="button" onclick="loadPreset('high')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Dark/Light</button>
+                <button type="button" onclick="loadPreset('cyber')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Cyber</button>
+                <button type="button" onclick="loadPreset('neon')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Neon Rose</button>
+                <button type="button" onclick="loadPreset('low')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Low (Fail)</button>
+              </div>
+            </div>
+
+            <!-- CSS Output Box with 1-Tap Copy -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px]">CSS Code:</span>
+                <button 
+                  type="button" 
+                  id="copyCssBtn" 
+                  onclick="copyCssCode()" 
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1"
+                >
+                  <i id="copyCssIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyCssText">Copy CSS</span>
+                </button>
+              </div>
+
+              <textarea 
+                id="cssOutput" 
+                rows="2" 
+                readonly 
+                class="w-full p-2 text-[11px] font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none resize-none leading-relaxed"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadContrastReport()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span>Download Report</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side Color Contrast Checker
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- COLOR CONTRAST JAVASCRIPT LOGIC -->
+  <script>
+    let fgColor = '#0F172A';
+    let bgColor = '#FFFFFF';
+
+    // Helper: Normalize 3-digit or 6-digit Hex
+    function normalizeHex(hex) {
+      let clean = hex.trim().replace(/^#/, '');
+      if (clean.length === 3) {
+        clean = clean.split('').map(c => c + c).join('');
+      }
+      return clean.length === 6 ? `#${clean.toUpperCase()}` : null;
+    }
+
+    // Convert Hex to RGB object
+    function hexToRgb(hex) {
+      const clean = hex.replace('#', '');
+      const num = parseInt(clean, 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+      };
+    }
+
+    // W3C WCAG 2.1 Relative Luminance Calculation
+    function getRelativeLuminance(rgb) {
+      const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(val => {
+        const c = val / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    // Calculate Contrast Ratio between two Hex colors
+    function calculateContrastRatio(hex1, hex2) {
+      const rgb1 = hexToRgb(hex1);
+      const rgb2 = hexToRgb(hex2);
+      const l1 = getRelativeLuminance(rgb1);
+      const l2 = getRelativeLuminance(rgb2);
+
+      const lighter = Math.max(l1, l2);
+      const darker = Math.min(l1, l2);
+
+      return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    // Update UI and Contrast Metrics
+    function updateContrastUI() {
+      const stage = document.getElementById('previewStage');
+      const ratioDisplay = document.getElementById('ratioDisplay');
+      const scoreBadge = document.getElementById('scoreBadge');
+      const cssOutput = document.getElementById('cssOutput');
+      const statusText = document.getElementById('statusText');
+
+      // Update Preview Box styling
+      stage.style.backgroundColor = bgColor;
+      stage.style.color = fgColor;
+
+      const ratio = calculateContrastRatio(fgColor, bgColor);
+      const formattedRatio = ratio.toFixed(2);
+      ratioDisplay.innerText = `${formattedRatio} : 1`;
+
+      // WCAG Compliance Calculations
+      const passNormalAA = ratio >= 4.5;
+      const passLargeAA = ratio >= 3.0;
+      const passNormalAAA = ratio >= 7.0;
+
+      // Update Badges
+      updateBadge('cardNormalAA', 'badgeNormalAA', passNormalAA, '4.5');
+      updateBadge('cardLargeAA', 'badgeLargeAA', passLargeAA, '3.0');
+      updateBadge('cardNormalAAA', 'badgeNormalAAA', passNormalAAA, '7.0');
+
+      // Overall Score Pill
+      if (passNormalAAA) {
+        scoreBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 flex items-center gap-1.5';
+        scoreBadge.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i><span>AAA Pass</span>';
+      } else if (passNormalAA) {
+        scoreBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-teal-700 bg-teal-100 dark:bg-teal-950/60 dark:text-teal-300 border border-teal-300 dark:border-teal-800 flex items-center gap-1.5';
+        scoreBadge.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i><span>AA Pass</span>';
+      } else if (passLargeAA) {
+        scoreBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-amber-700 bg-amber-100 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800 flex items-center gap-1.5';
+        scoreBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i><span>Large Only</span>';
+      } else {
+        scoreBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-rose-700 bg-rose-100 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-300 dark:border-rose-800 flex items-center gap-1.5';
+        scoreBadge.innerHTML = '<i class="fa-solid fa-circle-xmark text-xs"></i><span>Fail</span>';
+      }
+
+      // Sync Inputs
+      document.getElementById('fgColorPicker').value = fgColor;
+      document.getElementById('fgTextInput').value = fgColor;
+      document.getElementById('bgColorPicker').value = bgColor;
+      document.getElementById('bgTextInput').value = bgColor;
+
+      // Update CSS Output
+      cssOutput.value = `color: ${fgColor.toLowerCase()};\nbackground-color: ${bgColor.toLowerCase()};`;
+      statusText.innerText = `Contrast ${formattedRatio}:1 • ${passNormalAA ? 'Meets WCAG AA' : 'Fails WCAG AA'}`;
+    }
+
+    // Helper: Update Single Badge Status
+    function updateBadge(cardId, badgeId, isPassed, threshold) {
+      const card = document.getElementById(cardId);
+      const badge = document.getElementById(badgeId);
+
+      if (isPassed) {
+        card.className = 'p-2 rounded-lg border text-center space-y-0.5 bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/60';
+        badge.className = 'font-bold text-emerald-600 dark:text-emerald-400';
+        badge.innerText = `PASS (${threshold})`;
+      } else {
+        card.className = 'p-2 rounded-lg border text-center space-y-0.5 bg-rose-50/80 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/60';
+        badge.className = 'font-bold text-rose-600 dark:text-rose-400';
+        badge.innerText = `FAIL (${threshold})`;
+      }
+    }
+
+    // Handle Native Color Picker Changes
+    function handleColorInput(type, val) {
+      if (type === 'fg') {
+        fgColor = val.toUpperCase();
+      } else {
+        bgColor = val.toUpperCase();
+      }
+      updateContrastUI();
+    }
+
+    // Handle Manual HEX Typing
+    function handleTextHexChange(type, val) {
+      const normalized = normalizeHex(val);
+      if (normalized) {
+        if (type === 'fg') {
+          fgColor = normalized;
+        } else {
+          bgColor = normalized;
+        }
+        updateContrastUI();
+      }
+    }
+
+    // Swap Foreground and Background Colors
+    function swapColors() {
+      const temp = fgColor;
+      fgColor = bgColor;
+      bgColor = temp;
+      updateContrastUI();
+    }
+
+    // Dedicated Working Copy Button for Single Color HEX
+    function copyColorHex(type) {
+      const hex = type === 'fg' ? fgColor : bgColor;
+      copyTextToClipboard(hex);
+
+      const btn = document.getElementById(`copyBtn_${type}`);
+      const label = document.getElementById(`copyLabel_${type}`);
+      const icon = document.getElementById(`copyIcon_${type}`);
+
+      btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+      btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+      icon.className = 'fa-solid fa-check text-[9px]';
+      label.innerText = 'Copied!';
+
+      setTimeout(() => {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+        btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+        icon.className = 'fa-regular fa-copy text-[9px]';
+        label.innerText = type === 'fg' ? 'Copy Text Hex' : 'Copy BG Hex';
+      }, 1500);
+
+      document.getElementById('statusText').innerText = `Copied ${hex} to clipboard!`;
+    }
+
+    // Copy Full CSS Rule
+    function copyCssCode() {
+      const code = document.getElementById('cssOutput').value;
+      if (!code.trim()) return;
+
+      copyTextToClipboard(code);
+      const copyText = document.getElementById('copyCssText');
+      const copyIcon = document.getElementById('copyCssIcon');
+
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        copyText.innerText = 'Copy CSS';
+        copyIcon.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied CSS rules to clipboard!';
+    }
+
+    // Universal Clipboard Copy helper using execCommand
+    function copyTextToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.style.top = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(temp);
+    }
+
+    // Roll Random Contrast Pair
+    function rollRandomPair() {
+      // Pick random hue and saturation
+      const isDarkBg = Math.random() > 0.5;
+      if (isDarkBg) {
+        // Dark background (luminance < 0.15)
+        bgColor = '#' + Math.floor(Math.random() * 0x222222).toString(16).padStart(6, '0').toUpperCase();
+        // Bright text (luminance > 0.70)
+        fgColor = '#' + (0xDDDDDD + Math.floor(Math.random() * 0x222222)).toString(16).padStart(6, '0').toUpperCase();
+      } else {
+        // Light background
+        bgColor = '#' + (0xEEEEEE + Math.floor(Math.random() * 0x111111)).toString(16).padStart(6, '0').toUpperCase();
+        // Dark text
+        fgColor = '#' + Math.floor(Math.random() * 0x333333).toString(16).padStart(6, '0').toUpperCase();
+      }
+
+      updateContrastUI();
+    }
+
+    // Load Curated Presets
+    function loadPreset(name) {
+      if (name === 'high') {
+        fgColor = '#0F172A';
+        bgColor = '#FFFFFF';
+      } else if (name === 'cyber') {
+        fgColor = '#38BDF8';
+        bgColor = '#0F172A';
+      } else if (name === 'neon') {
+        fgColor = '#FFE4E6';
+        bgColor = '#E11D48';
+      } else if (name === 'low') {
+        fgColor = '#94A3B8';
+        bgColor = '#FFFFFF';
+      }
+
+      updateContrastUI();
+    }
+
+    // Download Contrast Report File
+    function downloadContrastReport() {
+      const ratio = calculateContrastRatio(fgColor, bgColor).toFixed(2);
+      const passAA = ratio >= 4.5 ? 'PASS' : 'FAIL';
+      const passAAA = ratio >= 7.0 ? 'PASS' : 'FAIL';
+      const passLarge = ratio >= 3.0 ? 'PASS' : 'FAIL';
+
+      const content = `/* FreeZip-Tools — Color Contrast Accessibility Report */
+Foreground (Text): ${fgColor}
+Background:        ${bgColor}
+Contrast Ratio:    ${ratio} : 1
+
+WCAG 2.1 Compliance:
+- Normal Text (AA, >= 4.5:1):  ${passAA}
+- Large Text (AA, >= 3.0:1):   ${passLarge}
+- Normal Text (AAA, >= 7.0:1): ${passAAA}
+
+CSS Snippet:
+color: ${fgColor.toLowerCase()};
+background-color: ${bgColor.toLowerCase()};
+`;
+
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'contrast-report.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = 'Downloaded contrast-report.txt!';
+    }
+
+    // Reset back to initial default
+    function resetAll() {
+      fgColor = '#0F172A';
+      bgColor = '#FFFFFF';
+      updateContrastUI();
+      document.getElementById('statusText').innerText = 'Contrast checker reset to default';
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+      updateContrastUI();
+    });
+  </script>
+</body>
+</html>

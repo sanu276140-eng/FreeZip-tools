@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>RSA Key Pair Generator — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- JSZip for packaging Key Pair (.zip) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    textarea {
+      tab-size: 2;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="index.html" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              RSA Key Pair
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              100% In-Browser asymmetric PKCS#8 & SPKI PEM key generator
+            </p>
+          </div>
+
+          <!-- Hidden File Input for Key Inspection -->
+          <input 
+            type="file" 
+            id="keyFileInput" 
+            accept=".pem,.key,.pub,.txt" 
+            class="hidden" 
+            onchange="handleFileUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: ROLL RSA KEY PAIR (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              id="mainRollBtn"
+              onclick="triggerGenerateRsaKeys()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-vault text-lg"></i>
+              <span id="mainBtnText">Roll RSA Key Pair</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Interactive RSA Studio Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3.5">
+            
+            <!-- SECTION 1: Key Size & Algorithm Selector Pills -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px] flex items-center gap-1.5">
+                  <i class="fa-solid fa-sliders text-red-500 text-[10px]"></i>
+                  <span>Key Modulus Size:</span>
+                </span>
+                
+                <button type="button" onclick="document.getElementById('keyFileInput').click()" class="font-mono text-[10px] font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1">
+                  <i class="fa-solid fa-upload text-[9px]"></i>
+                  <span>Upload .pem</span>
+                </button>
+              </div>
+
+              <!-- Key Size Pills (1024-bit, 2048-bit Default, 4096-bit) -->
+              <div class="grid grid-cols-3 gap-1.5 font-mono text-[11px]">
+                <button type="button" onclick="setKeySize(1024)" id="size1024Btn" class="py-1 px-2 rounded-lg font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800 text-center transition-all">
+                  1024-bit <span class="text-[9px] block opacity-75 font-normal">Fast</span>
+                </button>
+                <button type="button" onclick="setKeySize(2048)" id="size2048Btn" class="py-1 px-2 rounded-lg font-bold bg-[#E11D48] text-white border border-[#E11D48] text-center shadow-xs transition-all">
+                  2048-bit <span class="text-[9px] block opacity-85 font-normal">Standard</span>
+                </button>
+                <button type="button" onclick="setKeySize(4096)" id="size4096Btn" class="py-1 px-2 rounded-lg font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800 text-center transition-all">
+                  4096-bit <span class="text-[9px] block opacity-75 font-normal">Military</span>
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-0.5">
+                <span>Algo: RSA-OAEP / SHA-256</span>
+                <span>Exponent: 65537 (0x10001)</span>
+              </div>
+            </div>
+
+            <!-- SECTION 2: Public Key Display with Dedicated Working Copy Button -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-sky-600 dark:text-sky-400 font-mono text-[11px] flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                  <span>Public Key (SPKI PEM):</span>
+                </span>
+
+                <!-- Dedicated Working Copy Button -->
+                <button 
+                  type="button" 
+                  id="copyPublicBtn"
+                  onclick="copyPublicKey()"
+                  title="Copy Public Key"
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+                >
+                  <i id="copyPublicIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyPublicText">Copy Public Key</span>
+                </button>
+              </div>
+
+              <!-- Public Key Textarea -->
+              <textarea 
+                id="publicKeyOutput" 
+                rows="4" 
+                readonly 
+                placeholder="-----BEGIN PUBLIC KEY-----&#10;...&#10;-----END PUBLIC KEY-----"
+                class="w-full p-2.5 text-[11px] font-mono font-medium rounded-lg border border-sky-200 dark:border-sky-950/60 bg-sky-50/50 dark:bg-sky-950/20 text-sky-900 dark:text-sky-300 focus:outline-none resize-none leading-relaxed select-all"
+              ></textarea>
+            </div>
+
+            <!-- SECTION 3: Private Key Display with Shoulder-Surfing Shield & Copy Button -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-rose-600 dark:text-rose-400 font-mono text-[11px] flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <span>Private Key (PKCS#8 PEM):</span>
+                </span>
+
+                <!-- Shoulder-Surfing Toggle & Dedicated Working Copy Button -->
+                <div class="flex items-center gap-2">
+                  <button 
+                    type="button" 
+                    onclick="togglePrivateKeyBlur()" 
+                    id="toggleBlurBtn" 
+                    title="Toggle Privacy Blur" 
+                    class="text-[10px] font-mono text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                  >
+                    <i id="blurIcon" class="fa-solid fa-eye-slash text-[10px]"></i>
+                  </button>
+
+                  <button 
+                    type="button" 
+                    id="copyPrivateBtn"
+                    onclick="copyPrivateKey()"
+                    title="Copy Private Key"
+                    class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+                  >
+                    <i id="copyPrivateIcon" class="fa-regular fa-copy text-[10px]"></i>
+                    <span id="copyPrivateText">Copy Private Key</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Private Key Textarea with Blur Shield -->
+              <div class="relative">
+                <textarea 
+                  id="privateKeyOutput" 
+                  rows="4" 
+                  readonly 
+                  placeholder="-----BEGIN PRIVATE KEY-----&#10;...&#10;-----END PRIVATE KEY-----"
+                  class="w-full p-2.5 text-[11px] font-mono font-medium rounded-lg border border-rose-200 dark:border-rose-950/60 bg-rose-50/50 dark:bg-rose-950/20 text-rose-900 dark:text-rose-300 focus:outline-none resize-none leading-relaxed select-all transition-all duration-200"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- SECTION 4: In-Browser Cryptographic Round-Trip Test (Encrypt & Decrypt) -->
+            <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-2.5 font-mono text-xs">
+              <div class="flex items-center justify-between text-[10px]">
+                <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <i class="fa-solid fa-vial text-red-500 text-[10px]"></i>
+                  <span>Test Key Pair Verification:</span>
+                </span>
+                <span id="testStatusBadge" class="text-slate-400">Ready</span>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <input 
+                  type="text" 
+                  id="testMessageInput" 
+                  value="Secret#2026" 
+                  placeholder="Test string..."
+                  class="flex-1 px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500"
+                >
+                <button 
+                  type="button" 
+                  onclick="runCryptographicVerification()"
+                  id="runVerifyBtn"
+                  class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 text-[11px] font-bold active:scale-95 transition-all shrink-0 cursor-pointer"
+                >
+                  Verify
+                </button>
+              </div>
+
+              <div id="verifyResultCard" class="hidden p-2 rounded-lg bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 space-y-1 text-[10px]">
+                <div class="flex items-center justify-between text-slate-400">
+                  <span>Encrypted Ciphertext:</span>
+                  <span id="cipherLength">--</span>
+                </div>
+                <div id="cipherSnippet" class="text-slate-600 dark:text-slate-300 truncate font-mono bg-white dark:bg-slate-900 p-1 rounded border border-slate-200/60 dark:border-slate-800"></div>
+                <div class="flex items-center justify-between pt-0.5">
+                  <span class="text-slate-400">Decrypted Plaintext:</span>
+                  <span id="decryptedOutput" class="font-bold text-emerald-600 dark:text-emerald-400">--</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadKeyPairSuite()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download (.zip)</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% In-Browser Cryptographic RSA Key Pair Generator
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- RSA KEY PAIR JAVASCRIPT LOGIC (Web Crypto API) -->
+  <script>
+    let currentKeySize = 2048;
+    let currentPublicKeyPem = '';
+    let currentPrivateKeyPem = '';
+    let currentCryptoKeyPair = null;
+    let isPrivateBlurred = false;
+    let isGenerating = false;
+
+    // Convert ArrayBuffer to PEM formatted string (64 chars per line)
+    function arrayBufferToPem(buffer, label) {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      const base64 = btoa(binary);
+      const lines = base64.match(/.{1,64}/g) || [base64];
+      return `-----BEGIN ${label}-----\n${lines.join('\n')}\n-----END ${label}-----`;
+    }
+
+    // Set Key Size (1024, 2048, 4096)
+    function setKeySize(bits) {
+      currentKeySize = bits;
+
+      const b1024 = document.getElementById('size1024Btn');
+      const b2048 = document.getElementById('size2048Btn');
+      const b4096 = document.getElementById('size4096Btn');
+
+      [b1024, b2048, b4096].forEach(b => {
+        b.className = 'py-1 px-2 rounded-lg font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800 text-center transition-all';
+      });
+
+      if (bits === 1024) b1024.className = 'py-1 px-2 rounded-lg font-bold bg-[#E11D48] text-white border border-[#E11D48] text-center shadow-xs transition-all';
+      else if (bits === 2048) b2048.className = 'py-1 px-2 rounded-lg font-bold bg-[#E11D48] text-white border border-[#E11D48] text-center shadow-xs transition-all';
+      else b4096.className = 'py-1 px-2 rounded-lg font-bold bg-[#E11D48] text-white border border-[#E11D48] text-center shadow-xs transition-all';
+
+      triggerGenerateRsaKeys();
+    }
+
+    // Core In-Browser Asymmetric RSA Generation (Web Crypto API)
+    async function triggerGenerateRsaKeys() {
+      if (isGenerating) return;
+      isGenerating = true;
+
+      const statusText = document.getElementById('statusText');
+      const mainBtnText = document.getElementById('mainBtnText');
+      const pubOutput = document.getElementById('publicKeyOutput');
+      const privOutput = document.getElementById('privateKeyOutput');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const verifyCard = document.getElementById('verifyResultCard');
+
+      statusText.innerText = `Generating ${currentKeySize}-bit RSA key pair in browser memory...`;
+      mainBtnText.innerText = 'Generating Keys...';
+      pubOutput.placeholder = 'Computing public key prime numbers...';
+      privOutput.placeholder = 'Computing private key factors...';
+      verifyCard.classList.add('hidden');
+
+      // Yield UI frame before computation
+      setTimeout(async () => {
+        try {
+          // Native Web Crypto RSA-OAEP with SHA-256
+          const keyPair = await window.crypto.subtle.generateKey(
+            {
+              name: "RSA-OAEP",
+              modulusLength: currentKeySize,
+              publicExponent: new Uint8Array([1, 0, 1]), // 65537
+              hash: "SHA-256"
+            },
+            true,
+            ["encrypt", "decrypt"]
+          );
+
+          currentCryptoKeyPair = keyPair;
+
+          // Export Public Key to SPKI format
+          const spkiBuffer = await window.crypto.subtle.exportKey("spki", keyPair.publicKey);
+          currentPublicKeyPem = arrayBufferToPem(spkiBuffer, "PUBLIC KEY");
+
+          // Export Private Key to PKCS#8 format
+          const pkcs8Buffer = await window.crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
+          currentPrivateKeyPem = arrayBufferToPem(pkcs8Buffer, "PRIVATE KEY");
+
+          pubOutput.value = currentPublicKeyPem;
+          privOutput.value = currentPrivateKeyPem;
+
+          downloadBtn.disabled = false;
+          statusText.innerText = `${currentKeySize}-bit RSA key pair successfully created!`;
+          document.getElementById('testStatusBadge').innerText = 'Ready';
+          document.getElementById('testStatusBadge').className = 'text-slate-400';
+
+        } catch (err) {
+          console.error(err);
+          statusText.innerText = 'Error generating RSA keys: ' + err.message;
+        } finally {
+          isGenerating = false;
+          mainBtnText.innerText = 'Roll RSA Key Pair';
+        }
+      }, 40);
+    }
+
+    // Toggle Private Key Blur (Shoulder Surfing Protection)
+    function togglePrivateKeyBlur() {
+      isPrivateBlurred = !isPrivateBlurred;
+      const privOutput = document.getElementById('privateKeyOutput');
+      const icon = document.getElementById('blurIcon');
+
+      if (isPrivateBlurred) {
+        privOutput.style.filter = 'blur(5px)';
+        icon.className = 'fa-solid fa-eye text-[10px]';
+      } else {
+        privOutput.style.filter = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-[10px]';
+      }
+    }
+
+    // Cryptographic Verification Round-Trip (Encrypt with Public Key -> Decrypt with Private Key)
+    async function runCryptographicVerification() {
+      if (!currentCryptoKeyPair) {
+        document.getElementById('statusText').innerText = 'Please generate an RSA key pair first!';
+        return;
+      }
+
+      const inputMsg = document.getElementById('testMessageInput').value || 'Secret#2026';
+      const verifyBadge = document.getElementById('testStatusBadge');
+      const verifyCard = document.getElementById('verifyResultCard');
+      const cipherSnippet = document.getElementById('cipherSnippet');
+      const cipherLength = document.getElementById('cipherLength');
+      const decryptedOutput = document.getElementById('decryptedOutput');
+
+      try {
+        const enc = new TextEncoder();
+        const data = enc.encode(inputMsg);
+
+        // 1. Encrypt with Public Key
+        const cipherBuffer = await window.crypto.subtle.encrypt(
+          { name: "RSA-OAEP" },
+          currentCryptoKeyPair.publicKey,
+          data
+        );
+
+        const cipherBytes = new Uint8Array(cipherBuffer);
+        let binary = '';
+        for (let i = 0; i < cipherBytes.byteLength; i++) {
+          binary += String.fromCharCode(cipherBytes[i]);
+        }
+        const cipherBase64 = btoa(binary);
+
+        // 2. Decrypt with Private Key
+        const decryptedBuffer = await window.crypto.subtle.decrypt(
+          { name: "RSA-OAEP" },
+          currentCryptoKeyPair.privateKey,
+          cipherBuffer
+        );
+
+        const dec = new TextDecoder();
+        const decryptedString = dec.decode(decryptedBuffer);
+
+        // Render proof card
+        cipherSnippet.innerText = cipherBase64;
+        cipherLength.innerText = `${cipherBytes.byteLength} bytes`;
+        decryptedOutput.innerText = decryptedString;
+        verifyCard.classList.remove('hidden');
+
+        if (decryptedString === inputMsg) {
+          verifyBadge.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"><i class="fa-solid fa-check"></i> Math Verified</span>';
+          document.getElementById('statusText').innerText = 'Verification successful: Encryption and Decryption matched!';
+        } else {
+          verifyBadge.innerHTML = '<span class="text-rose-500 font-bold">Failed</span>';
+        }
+      } catch (err) {
+        console.error(err);
+        verifyBadge.innerHTML = '<span class="text-rose-500 font-bold">Error</span>';
+        document.getElementById('statusText').innerText = 'Verification error: ' + err.message;
+      }
+    }
+
+    // Dedicated Working Copy Button for Public Key
+    function copyPublicKey() {
+      if (!currentPublicKeyPem) return;
+
+      copyTextToClipboard(currentPublicKeyPem);
+      const textEl = document.getElementById('copyPublicText');
+      const iconEl = document.getElementById('copyPublicIcon');
+
+      textEl.innerText = 'Copied!';
+      iconEl.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        textEl.innerText = 'Copy Public Key';
+        iconEl.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied Public Key (SPKI) to clipboard!';
+    }
+
+    // Dedicated Working Copy Button for Private Key
+    function copyPrivateKey() {
+      if (!currentPrivateKeyPem) return;
+
+      copyTextToClipboard(currentPrivateKeyPem);
+      const textEl = document.getElementById('copyPrivateText');
+      const iconEl = document.getElementById('copyPrivateIcon');
+
+      textEl.innerText = 'Copied!';
+      iconEl.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        textEl.innerText = 'Copy Private Key';
+        iconEl.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied Private Key (PKCS#8) to clipboard!';
+    }
+
+    // Universal copy helper using execCommand for sandbox iframe reliability
+    function copyTextToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.style.top = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(temp);
+    }
+
+    // 1. Upload File Handler (Inspects external PEM)
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = `Reading ${file.name}...`;
+
+      try {
+        const text = await file.text();
+        const trimmed = text.trim();
+
+        if (trimmed.includes('PUBLIC KEY')) {
+          currentPublicKeyPem = trimmed;
+          document.getElementById('publicKeyOutput').value = trimmed;
+          status.innerText = `Loaded Public Key from ${file.name}!`;
+        } else if (trimmed.includes('PRIVATE KEY')) {
+          currentPrivateKeyPem = trimmed;
+          document.getElementById('privateKeyOutput').value = trimmed;
+          status.innerText = `Loaded Private Key from ${file.name}!`;
+        } else {
+          status.innerText = 'File does not contain standard PEM header.';
+        }
+        document.getElementById('downloadBtn').disabled = false;
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Could not read PEM file.';
+      }
+
+      event.target.value = '';
+    }
+
+    // 2. Download Key Pair Package (.zip with public.pem, private.pem, & instructions)
+    async function downloadKeyPairSuite() {
+      if (!currentPublicKeyPem || !currentPrivateKeyPem) return;
+
+      const downloadBtn = document.getElementById('downloadBtn');
+      const btnText = document.getElementById('downloadBtnText');
+      const status = document.getElementById('statusText');
+
+      try {
+        downloadBtn.disabled = true;
+        btnText.innerText = 'Packaging...';
+        status.innerText = 'Creating key pair zip archive...';
+
+        const zip = new JSZip();
+        zip.file("public_key.pub", currentPublicKeyPem);
+        zip.file("private_key.pem", currentPrivateKeyPem);
+        
+        const metadata = `# FreeZip-Tools RSA Key Pair Manifest
+Generated:  ${new Date().toISOString()}
+Algorithm:  RSA-OAEP with SHA-256
+Key Size:   ${currentKeySize} bits
+Exponent:   65537 (0x10001)
+
+Files:
+- public_key.pub  : SPKI Public Key (Safe to share publicly)
+- private_key.pem : PKCS#8 Private Key (Keep strictly confidential)
+
+100% In-Browser Cryptographic Generation via Web Crypto API.
+Zero server uploads or telemetry.
+`;
+        zip.file("README.txt", metadata);
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `rsa-${currentKeySize}-keypair.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        status.innerText = `Downloaded rsa-${currentKeySize}-keypair.zip!`;
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Error packaging key pair zip.';
+      } finally {
+        downloadBtn.disabled = false;
+        btnText.innerText = 'Download (.zip)';
+      }
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      currentKeySize = 2048;
+      currentPublicKeyPem = '';
+      currentPrivateKeyPem = '';
+      currentCryptoKeyPair = null;
+      isPrivateBlurred = false;
+
+      document.getElementById('publicKeyOutput').value = '';
+      document.getElementById('privateKeyOutput').value = '';
+      document.getElementById('privateKeyOutput').style.filter = 'none';
+      document.getElementById('blurIcon').className = 'fa-solid fa-eye-slash text-[10px]';
+      document.getElementById('verifyResultCard').classList.add('hidden');
+      document.getElementById('testStatusBadge').innerText = 'Ready';
+      document.getElementById('testStatusBadge').className = 'text-slate-400';
+      document.getElementById('downloadBtn').disabled = true;
+      document.getElementById('statusText').innerText = 'RSA key generator reset to default';
+
+      setKeySize(2048);
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+      triggerGenerateRsaKeys();
+    });
+  </script>
+</body>
+</html>

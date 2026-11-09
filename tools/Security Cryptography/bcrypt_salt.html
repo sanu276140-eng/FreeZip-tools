@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Bcrypt Salt & Hash Generator — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- bcryptjs CDN for In-Browser Cryptographic Blowfish Hashing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    input[type="range"] {
+      accent-color: #E11D48;
+    }
+    textarea {
+      tab-size: 2;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="index.html" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="index.html" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Bcrypt Salt
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Blowfish adaptive key derivation, salting & password verification
+            </p>
+          </div>
+
+          <!-- Hidden File Input for Password/Hash File Upload -->
+          <input 
+            type="file" 
+            id="bcryptFileInput" 
+            accept=".txt,text/plain" 
+            class="hidden" 
+            onchange="handleFileUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: ROLL BCRYPT HASH & SALT (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="triggerGenerateBcrypt()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-user-lock text-lg"></i>
+              <span id="mainBtnText">Roll Bcrypt Hash & Salt</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Interactive Bcrypt Studio Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3.5">
+            
+            <!-- SECTION 1: Plaintext Password Input -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px] flex items-center gap-1.5">
+                  <i class="fa-solid fa-key text-red-500 text-[10px]"></i>
+                  <span>Password / Plaintext:</span>
+                </span>
+                
+                <!-- Quick Sample & Clear Helpers -->
+                <div class="flex items-center gap-2 font-mono text-[10px]">
+                  <button type="button" onclick="loadSamplePassword()" class="font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                    Sample
+                  </button>
+                  <span class="text-slate-300 dark:text-slate-700">&bull;</span>
+                  <button type="button" onclick="document.getElementById('bcryptFileInput').click()" class="font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+                    Upload .txt
+                  </button>
+                </div>
+              </div>
+
+              <!-- Input with visibility toggle -->
+              <div class="relative flex items-center">
+                <input 
+                  type="text" 
+                  id="plainInput" 
+                  oninput="handlePasswordChange(this.value)"
+                  placeholder="Enter string to hash (e.g. MySecretPass#2026)..."
+                  class="w-full p-2.5 pr-10 text-xs font-mono font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors tracking-wide"
+                >
+                <button 
+                  type="button" 
+                  onclick="toggleInputVisibility()" 
+                  id="toggleVisBtn"
+                  class="absolute right-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
+                  title="Toggle Masking"
+                >
+                  <i id="visIcon" class="fa-solid fa-eye text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- SECTION 2: Cost Factor (Salt Rounds) & Prefix Selector -->
+            <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Cost Factor (Rounds):</span>
+                <span id="roundsDisplay" class="text-red-500 font-bold">10 Rounds (1,024 iters)</span>
+              </div>
+              
+              <!-- Salt Rounds Slider (4 to 15) -->
+              <input 
+                type="range" 
+                id="roundsSlider" 
+                min="4" 
+                max="14" 
+                value="10" 
+                oninput="handleRoundsChange(this.value)"
+                class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+              >
+
+              <!-- Prefix Selector Pills ($2a, $2b, $2y) -->
+              <div class="flex items-center justify-between text-xs font-mono pt-1">
+                <span class="text-slate-500 dark:text-slate-400 text-[10px]">Algorithm Prefix:</span>
+                <div class="flex items-center gap-1 text-[10px]">
+                  <button type="button" onclick="setPrefix('$2b$')" id="pfx2bBtn" class="px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all">$2b (Default)</button>
+                  <button type="button" onclick="setPrefix('$2a$')" id="pfx2aBtn" class="px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">$2a</button>
+                  <button type="button" onclick="setPrefix('$2y$')" id="pfx2yBtn" class="px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">$2y (PHP)</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 3: Generated Bcrypt Hash Output with Working Copy Button -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px] flex items-center gap-1.5">
+                  <i class="fa-solid fa-fingerprint text-red-500 text-[10px]"></i>
+                  <span>Bcrypt Hash (60 chars):</span>
+                </span>
+
+                <!-- Dedicated Working Copy Button for Full Hash -->
+                <button 
+                  type="button" 
+                  id="copyHashBtn"
+                  onclick="copyBcryptHash()"
+                  title="Copy Full Bcrypt Hash"
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+                >
+                  <i id="copyHashIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyHashText">Copy Hash</span>
+                </button>
+              </div>
+
+              <!-- Hash Output Area -->
+              <textarea 
+                id="hashOutput" 
+                rows="2" 
+                readonly 
+                placeholder="$2b$10$..."
+                class="w-full p-2.5 text-xs font-mono font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-emerald-600 dark:text-emerald-400 focus:outline-none resize-none leading-relaxed break-all select-all shadow-inner"
+              ></textarea>
+            </div>
+
+            <!-- SECTION 4: Anatomical Hash Breakdown (Educational & Developer Inspection) -->
+            <div id="hashBreakdownCard" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-2 text-xs font-mono">
+              <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-bold">
+                <span>Anatomy Breakdown:</span>
+                <button 
+                  type="button" 
+                  id="copySaltBtn"
+                  onclick="copyExtractedSalt()"
+                  class="hover:text-red-500 flex items-center gap-1 text-[9px] cursor-pointer"
+                >
+                  <i id="copySaltIcon" class="fa-regular fa-copy text-[8px]"></i>
+                  <span id="copySaltText">Copy Salt</span>
+                </button>
+              </div>
+
+              <!-- 4 Anatomical Columns -->
+              <div class="grid grid-cols-4 gap-1 text-[10px] text-center pt-0.5">
+                <div class="p-1 rounded bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/40">
+                  <span class="block text-slate-400 text-[8px]">Prefix</span>
+                  <span id="anatPrefix" class="font-bold text-rose-600 dark:text-rose-400">$2b</span>
+                </div>
+                <div class="p-1 rounded bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/40">
+                  <span class="block text-slate-400 text-[8px]">Cost</span>
+                  <span id="anatCost" class="font-bold text-amber-600 dark:text-amber-400">10</span>
+                </div>
+                <div class="p-1 rounded bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900/40 col-span-2 text-left px-2">
+                  <span class="block text-slate-400 text-[8px]">Extracted Salt (22 chars)</span>
+                  <span id="anatSalt" class="font-bold text-sky-600 dark:text-sky-400 truncate block">--</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SECTION 5: In-Browser Bcrypt Verifier / Matcher -->
+            <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-2.5 text-xs font-mono">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-700 dark:text-slate-300 text-[11px] flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-check text-red-500 text-[10px]"></i>
+                  <span>Verify / Match Hash:</span>
+                </span>
+                <span id="verifyStatusBadge" class="text-[10px] text-slate-400">Optional</span>
+              </div>
+
+              <!-- Test Password and Hash Fields for comparison -->
+              <div class="space-y-1.5">
+                <input 
+                  type="text" 
+                  id="testPasswordInput" 
+                  oninput="handleVerifyCheck()"
+                  placeholder="Password to test (e.g. MySecretPass#2026)..."
+                  class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500 transition-colors"
+                >
+                <input 
+                  type="text" 
+                  id="testHashInput" 
+                  oninput="handleVerifyCheck()"
+                  placeholder="Paste Bcrypt hash to compare ($2b$10$...)..."
+                  class="w-full px-2.5 py-1.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500 transition-colors truncate"
+                >
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadBcryptFile()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download (.txt)</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side In-Browser Bcrypt Generator & Verifier
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- BCRYPT SALT & HASH JAVASCRIPT LOGIC -->
+  <script>
+    let currentRounds = 10;
+    let selectedPrefix = '$2b$';
+    let isMasked = false;
+    let currentHash = '';
+    let currentSalt = '';
+    let isCalculating = false;
+
+    // Resolve Bcrypt library handle (support cdnjs dcodeIO.bcrypt or global window.bcrypt)
+    function getBcryptLib() {
+      if (typeof window.dcodeIO !== 'undefined' && window.dcodeIO.bcrypt) {
+        return window.dcodeIO.bcrypt;
+      }
+      if (typeof window.bcrypt !== 'undefined') {
+        return window.bcrypt;
+      }
+      return null;
+    }
+
+    // Switch Algorithm Prefix ($2a$, $2b$, $2y$)
+    function setPrefix(pfx) {
+      selectedPrefix = pfx;
+      const b2b = document.getElementById('pfx2bBtn');
+      const b2a = document.getElementById('pfx2aBtn');
+      const b2y = document.getElementById('pfx2yBtn');
+
+      [b2b, b2a, b2y].forEach(b => {
+        b.className = 'px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+      });
+
+      if (pfx === '$2b$') b2b.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      else if (pfx === '$2a$') b2a.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      else b2y.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+
+      triggerGenerateBcrypt();
+    }
+
+    // Rounds slider handler
+    function handleRoundsChange(val) {
+      currentRounds = parseInt(val, 10);
+      const iters = Math.pow(2, currentRounds).toLocaleString();
+      document.getElementById('roundsDisplay').innerText = `${currentRounds} Rounds (${iters} iters)`;
+      triggerGenerateBcrypt();
+    }
+
+    // Password input listener
+    function handlePasswordChange(val) {
+      if (val.trim()) {
+        triggerGenerateBcrypt();
+      } else {
+        currentHash = '';
+        currentSalt = '';
+        document.getElementById('hashOutput').value = '';
+        document.getElementById('anatSalt').innerText = '--';
+        document.getElementById('downloadBtn').disabled = true;
+        document.getElementById('statusText').innerText = 'Enter password or text to hash';
+      }
+    }
+
+    // Toggle Input Masking
+    function toggleInputVisibility() {
+      isMasked = !isMasked;
+      const input = document.getElementById('plainInput');
+      const icon = document.getElementById('visIcon');
+
+      if (isMasked) {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye-slash text-xs';
+      } else {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye text-xs';
+      }
+    }
+
+    // Core In-Browser Bcrypt Hashing Function (Asynchronous)
+    async function triggerGenerateBcrypt() {
+      const password = document.getElementById('plainInput').value;
+      const statusText = document.getElementById('statusText');
+      const hashOutput = document.getElementById('hashOutput');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const mainBtn = document.getElementById('mainBtnText');
+
+      if (!password) {
+        statusText.innerText = 'Please enter a password or string first!';
+        return;
+      }
+
+      const bcrypt = getBcryptLib();
+      if (!bcrypt) {
+        statusText.innerText = 'Bcrypt engine loading... please wait a moment.';
+        return;
+      }
+
+      if (isCalculating) return;
+      isCalculating = true;
+
+      statusText.innerText = `Computing Bcrypt hash (2^${currentRounds} = ${Math.pow(2, currentRounds).toLocaleString()} rounds)...`;
+      mainBtn.innerText = 'Hashing...';
+      hashOutput.placeholder = 'Computing hash in browser memory...';
+
+      // Yield UI frame before computation
+      setTimeout(() => {
+        try {
+          // Generate authentic salt with specified cost factor
+          bcrypt.genSalt(currentRounds, (saltErr, salt) => {
+            if (saltErr || !salt) {
+              console.error(saltErr);
+              statusText.innerText = 'Error generating cryptographic salt.';
+              isCalculating = false;
+              mainBtn.innerText = 'Roll Bcrypt Hash & Salt';
+              return;
+            }
+
+            // Adjust prefix if $2b$ or $2y$ is selected (bcryptjs generates $2a$ by default)
+            let formattedSalt = salt;
+            if (selectedPrefix !== '$2a$' && formattedSalt.startsWith('$2a$')) {
+              formattedSalt = selectedPrefix + formattedSalt.substring(4);
+            }
+
+            bcrypt.hash(password, formattedSalt, (hashErr, hash) => {
+              isCalculating = false;
+              mainBtn.innerText = 'Roll Bcrypt Hash & Salt';
+
+              if (hashErr || !hash) {
+                console.error(hashErr);
+                statusText.innerText = 'Error generating Bcrypt hash.';
+                return;
+              }
+
+              // Adjust prefix in full hash
+              let finalHash = hash;
+              if (selectedPrefix !== '$2a$' && finalHash.startsWith('$2a$')) {
+                finalHash = selectedPrefix + finalHash.substring(4);
+              }
+
+              currentHash = finalHash;
+              currentSalt = formattedSalt;
+
+              hashOutput.value = currentHash;
+              downloadBtn.disabled = false;
+              statusText.innerText = `Bcrypt hash generated successfully (${currentRounds} rounds)!`;
+
+              // Populate Anatomical Breakdown
+              parseHashBreakdown(currentHash);
+
+              // Auto populate verifier if empty
+              const testHashInput = document.getElementById('testHashInput');
+              if (!testHashInput.value.trim()) {
+                testHashInput.value = currentHash;
+              }
+              const testPwInput = document.getElementById('testPasswordInput');
+              if (!testPwInput.value.trim()) {
+                testPwInput.value = password;
+              }
+              handleVerifyCheck();
+            });
+          });
+        } catch (err) {
+          isCalculating = false;
+          mainBtn.innerText = 'Roll Bcrypt Hash & Salt';
+          console.error(err);
+          statusText.innerText = 'Bcrypt calculation failed.';
+        }
+      }, 30);
+    }
+
+    // Parse and display Bcrypt hash anatomy
+    function parseHashBreakdown(hash) {
+      // Standard format: $2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcFl7p92ldGxad68LJZdL17lhWy
+      // Prefix: $2b$ (chars 0-3)
+      // Cost: 10 (chars 4-5)
+      // Salt: 22 chars (chars 7-28)
+      // Hash / Checksum: 31 chars (chars 29-59)
+      if (hash.length >= 29) {
+        const parts = hash.split('$');
+        if (parts.length >= 4) {
+          document.getElementById('anatPrefix').innerText = `$${parts[1]}`;
+          document.getElementById('anatCost').innerText = parts[2];
+          // The 3rd part starts with 22 salt chars
+          const saltPart = parts[3].slice(0, 22);
+          document.getElementById('anatSalt').innerText = saltPart;
+        }
+      }
+    }
+
+    // In-Browser Bcrypt Verification Check
+    function handleVerifyCheck() {
+      const password = document.getElementById('testPasswordInput').value;
+      const hash = document.getElementById('testHashInput').value.trim();
+      const badge = document.getElementById('verifyStatusBadge');
+
+      if (!password || !hash) {
+        badge.innerText = 'Optional';
+        badge.className = 'text-[10px] text-slate-400';
+        return;
+      }
+
+      const bcrypt = getBcryptLib();
+      if (!bcrypt) return;
+
+      try {
+        // Normalize prefix to $2a$ for bcrypt.compare compatibility if needed
+        let checkHash = hash;
+        if (checkHash.startsWith('$2b$') || checkHash.startsWith('$2y$')) {
+          checkHash = '$2a$' + checkHash.substring(4);
+        }
+
+        bcrypt.compare(password, checkHash, (err, res) => {
+          if (err) {
+            badge.innerHTML = '<span class="text-amber-500 font-bold flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> Invalid Hash Format</span>';
+            return;
+          }
+
+          if (res === true) {
+            badge.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1"><i class="fa-solid fa-check"></i> PASSWORD MATCH</span>';
+          } else {
+            badge.innerHTML = '<span class="text-rose-500 font-bold flex items-center gap-1"><i class="fa-solid fa-xmark"></i> MISMATCH</span>';
+          }
+        });
+      } catch (e) {
+        badge.innerHTML = '<span class="text-rose-500 font-bold flex items-center gap-1"><i class="fa-solid fa-xmark"></i> Invalid Hash</span>';
+      }
+    }
+
+    // 1. Upload File Handler (reads text file)
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = `Reading ${file.name}...`;
+
+      try {
+        const text = await file.text();
+        const trimmed = text.trim();
+        
+        // If file contains a bcrypt hash ($2...) load into verifier
+        if (trimmed.startsWith('$2')) {
+          document.getElementById('testHashInput').value = trimmed;
+          handleVerifyCheck();
+          status.innerText = `Loaded Bcrypt hash from ${file.name}!`;
+        } else {
+          document.getElementById('plainInput').value = trimmed;
+          triggerGenerateBcrypt();
+          status.innerText = `Loaded password from ${file.name}!`;
+        }
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Could not read file.';
+      }
+
+      event.target.value = '';
+    }
+
+    // Quick Test Sample Password
+    function loadSamplePassword() {
+      const sample = "FreeZipSecure#2026";
+      document.getElementById('plainInput').value = sample;
+      triggerGenerateBcrypt();
+    }
+
+    // Dedicated Working Copy Button for Full Hash
+    function copyBcryptHash() {
+      const output = document.getElementById('hashOutput');
+      if (!output.value.trim()) return;
+
+      copyTextToClipboard(output.value);
+      const copyText = document.getElementById('copyHashText');
+      const copyIcon = document.getElementById('copyHashIcon');
+
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        copyText.innerText = 'Copy Hash';
+        copyIcon.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied Bcrypt hash to clipboard!';
+    }
+
+    // Dedicated Working Copy Button for Salt
+    function copyExtractedSalt() {
+      const saltText = document.getElementById('anatSalt').innerText;
+      if (!saltText || saltText === '--') return;
+
+      copyTextToClipboard(saltText);
+      const textEl = document.getElementById('copySaltText');
+      const iconEl = document.getElementById('copySaltIcon');
+
+      textEl.innerText = 'Copied!';
+      iconEl.className = 'fa-solid fa-check text-[8px] text-emerald-500';
+
+      setTimeout(() => {
+        textEl.innerText = 'Copy Salt';
+        iconEl.className = 'fa-regular fa-copy text-[8px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied 22-character salt to clipboard!';
+    }
+
+    // Universal copy helper using execCommand for sandbox iframe reliability
+    function copyTextToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.style.top = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(temp);
+    }
+
+    // 2. Download Bcrypt (.txt) File
+    function downloadBcryptFile() {
+      if (!currentHash) return;
+
+      const plainText = document.getElementById('plainInput').value;
+      const content = `# FreeZip-Tools — Bcrypt Hash Record
+# 100% In-Browser Cryptographic Generation
+
+Password:   ${plainText}
+Bcrypt:     ${currentHash}
+Prefix:     ${selectedPrefix}
+Rounds:     ${currentRounds} (Cost Factor)
+Salt:       ${currentSalt}
+Generated:  ${new Date().toISOString()}
+`;
+
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bcrypt-hash.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = 'Downloaded bcrypt-hash.txt!';
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      currentHash = '';
+      currentSalt = '';
+      currentRounds = 10;
+      selectedPrefix = '$2b$';
+      isMasked = false;
+
+      document.getElementById('plainInput').value = '';
+      document.getElementById('plainInput').type = 'text';
+      document.getElementById('visIcon').className = 'fa-solid fa-eye text-xs';
+      document.getElementById('hashOutput').value = '';
+      document.getElementById('anatSalt').innerText = '--';
+      document.getElementById('anatCost').innerText = '10';
+      document.getElementById('anatPrefix').innerText = '$2b';
+      document.getElementById('testPasswordInput').value = '';
+      document.getElementById('testHashInput').value = '';
+      document.getElementById('verifyStatusBadge').innerText = 'Optional';
+      document.getElementById('verifyStatusBadge').className = 'text-[10px] text-slate-400';
+      document.getElementById('roundsSlider').value = 10;
+      document.getElementById('roundsDisplay').innerText = '10 Rounds (1,024 iters)';
+      document.getElementById('downloadBtn').disabled = true;
+      document.getElementById('statusText').innerText = 'Bcrypt generator reset to default';
+
+      setPrefix('$2b$');
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+      loadSamplePassword();
+    });
+  </script>
+</body>
+</html>

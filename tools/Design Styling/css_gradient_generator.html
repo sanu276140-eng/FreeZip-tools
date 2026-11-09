@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>CSS Gradient Generator — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    /* Color picker native styling */
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 8px;
+    }
+    /* Range Slider Styling */
+    input[type="range"] {
+      accent-color: #E11D48;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="https://www.freezip.site/" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="https://www.freezip.site/" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              CSS Gradient
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Customize linear, radial & conic CSS gradients
+            </p>
+          </div>
+
+          <!-- 1. MAIN BUTTON: GENERATE RANDOM GRADIENT (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="generateRandomGradient()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-dice text-lg"></i>
+              <span>Roll Random Gradient</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Interactive Gradient Studio Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3.5">
+            
+            <!-- Live Gradient Preview Box -->
+            <div class="relative w-full h-32 sm:h-36 rounded-xl border border-black/10 dark:border-white/10 shadow-inner overflow-hidden flex items-end p-2.5 transition-all duration-200" id="gradientPreview">
+              <div class="bg-black/35 backdrop-blur-md px-2.5 py-1 rounded-lg text-white font-mono text-[10px] font-bold tracking-tight">
+                <span id="previewTag">linear-gradient(135deg)</span>
+              </div>
+            </div>
+
+            <!-- Gradient Type Selector (Linear, Radial, Conic) -->
+            <div class="flex items-center justify-between text-xs pt-1">
+              <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px] flex items-center gap-1.5">
+                <i class="fa-solid fa-sliders text-red-500 text-[10px]"></i>
+                <span>Type:</span>
+              </span>
+              <div class="flex items-center gap-1 font-mono text-[11px]">
+                <button type="button" onclick="setGradientType('linear')" id="typeLinearBtn" class="px-2.5 py-1 rounded font-bold bg-[#E11D48] text-white transition-all">Linear</button>
+                <button type="button" onclick="setGradientType('radial')" id="typeRadialBtn" class="px-2.5 py-1 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Radial</button>
+                <button type="button" onclick="setGradientType('conic')" id="typeConicBtn" class="px-2.5 py-1 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Conic</button>
+              </div>
+            </div>
+
+            <!-- Angle Slider (Linear & Conic only) -->
+            <div id="angleControlRow" class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Angle:</span>
+                <span id="angleValueBadge" class="text-red-500 font-bold">135°</span>
+              </div>
+              <input 
+                type="range" 
+                id="angleRange" 
+                min="0" 
+                max="360" 
+                value="135" 
+                oninput="handleAngleChange(this.value)"
+                class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+              >
+            </div>
+
+            <!-- Color Stops Manager with Dedicated Copy Buttons -->
+            <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">Color Stops:</span>
+                <button 
+                  type="button" 
+                  onclick="addColorStop()" 
+                  id="addStopBtn"
+                  class="text-[10px] font-bold text-red-500 hover:text-red-700 dark:hover:text-red-400 flex items-center gap-1"
+                >
+                  <i class="fa-solid fa-plus text-[9px]"></i>
+                  <span>Add Stop</span>
+                </button>
+              </div>
+
+              <!-- Color Stops Container (Injected via JS) -->
+              <div id="colorStopsContainer" class="space-y-2">
+                <!-- Color stop items rendered here -->
+              </div>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[10px] block">Presets:</span>
+              <div class="grid grid-cols-4 gap-1.5 font-mono text-[10px]">
+                <button type="button" onclick="loadPreset('sunset')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Sunset</button>
+                <button type="button" onclick="loadPreset('ocean')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Ocean</button>
+                <button type="button" onclick="loadPreset('neon')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Neon Rose</button>
+                <button type="button" onclick="loadPreset('emerald')" class="p-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-red-500 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 truncate">Emerald</button>
+              </div>
+            </div>
+
+            <!-- CSS Output Box with 1-Tap Copy -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px]">CSS Code:</span>
+                <button 
+                  type="button" 
+                  id="copyCssBtn" 
+                  onclick="copyCssCode()" 
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1"
+                >
+                  <i id="copyCssIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyCssText">Copy CSS</span>
+                </button>
+              </div>
+
+              <textarea 
+                id="cssOutput" 
+                rows="2" 
+                readonly 
+                class="w-full p-2 text-[11px] font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none resize-none leading-relaxed"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadGradientCss()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span>Download CSS</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side CSS Gradient Generator
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- CSS GRADIENT JAVASCRIPT LOGIC -->
+  <script>
+    let gradientType = 'linear'; // 'linear', 'radial', 'conic'
+    let currentAngle = 135;
+
+    // Gradient State with Color Stops & Positions
+    let colorStops = [
+      { color: '#E11D48', stop: 0 },
+      { color: '#F43F5E', stop: 50 },
+      { color: '#6366F1', stop: 100 }
+    ];
+
+    // Build standard CSS gradient property value
+    function buildGradientCssValue() {
+      const stopsString = colorStops
+        .sort((a, b) => a.stop - b.stop)
+        .map(s => `${s.color} ${s.stop}%`)
+        .join(', ');
+
+      if (gradientType === 'linear') {
+        return `linear-gradient(${currentAngle}deg, ${stopsString})`;
+      } else if (gradientType === 'radial') {
+        return `radial-gradient(circle, ${stopsString})`;
+      } else if (gradientType === 'conic') {
+        return `conic-gradient(from ${currentAngle}deg, ${stopsString})`;
+      }
+      return `linear-gradient(${currentAngle}deg, ${stopsString})`;
+    }
+
+    // Refresh UI & Gradient Preview
+    function updateGradientUI() {
+      const cssVal = buildGradientCssValue();
+      const preview = document.getElementById('gradientPreview');
+      const previewTag = document.getElementById('previewTag');
+      const cssOutput = document.getElementById('cssOutput');
+      const statusText = document.getElementById('statusText');
+
+      preview.style.background = cssVal;
+      previewTag.innerText = gradientType === 'linear' 
+        ? `linear-gradient(${currentAngle}°)` 
+        : (gradientType === 'conic' ? `conic-gradient(${currentAngle}°)` : 'radial-gradient()');
+
+      cssOutput.value = `background: ${cssVal};`;
+      statusText.innerText = `Active: ${gradientType.toUpperCase()} gradient with ${colorStops.length} stops`;
+
+      renderColorStops();
+    }
+
+    // Switch Gradient Type (linear, radial, conic)
+    function setGradientType(type) {
+      gradientType = type;
+      const bLinear = document.getElementById('typeLinearBtn');
+      const bRadial = document.getElementById('typeRadialBtn');
+      const bConic = document.getElementById('typeConicBtn');
+      const angleRow = document.getElementById('angleControlRow');
+
+      [bLinear, bRadial, bConic].forEach(b => {
+        b.className = 'px-2.5 py-1 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+      });
+
+      if (type === 'linear') {
+        bLinear.className = 'px-2.5 py-1 rounded font-bold bg-[#E11D48] text-white transition-all';
+        angleRow.classList.remove('hidden');
+      } else if (type === 'radial') {
+        bRadial.className = 'px-2.5 py-1 rounded font-bold bg-[#E11D48] text-white transition-all';
+        angleRow.classList.add('hidden');
+      } else {
+        bConic.className = 'px-2.5 py-1 rounded font-bold bg-[#E11D48] text-white transition-all';
+        angleRow.classList.remove('hidden');
+      }
+
+      updateGradientUI();
+    }
+
+    // Handle angle slider input
+    function handleAngleChange(val) {
+      currentAngle = parseInt(val, 10);
+      document.getElementById('angleValueBadge').innerText = `${currentAngle}°`;
+      updateGradientUI();
+    }
+
+    // Add a new color stop
+    function addColorStop() {
+      if (colorStops.length >= 6) return;
+      const lastStop = colorStops[colorStops.length - 1];
+      const newStopVal = Math.min(100, (lastStop ? lastStop.stop : 50) + 15);
+      const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase();
+
+      colorStops.push({ color: randomColor, stop: newStopVal });
+      updateGradientUI();
+    }
+
+    // Remove an existing color stop
+    function removeColorStop(idx) {
+      if (colorStops.length <= 2) return;
+      colorStops.splice(idx, 1);
+      updateGradientUI();
+    }
+
+    // Update stop color
+    function handleColorChange(idx, newColor) {
+      colorStops[idx].color = newColor.toUpperCase();
+      updateGradientUI();
+    }
+
+    // Update stop percentage position
+    function handleStopPercentChange(idx, newStop) {
+      colorStops[idx].stop = Math.max(0, Math.min(100, parseInt(newStop, 10) || 0));
+      updateGradientUI();
+    }
+
+    // Dedicated Copy Single Stop Color with feedback
+    function copyStopColor(hex, idx) {
+      copyTextToClipboard(hex);
+      const btn = document.getElementById(`copyStopBtn_${idx}`);
+      const label = document.getElementById(`copyStopLabel_${idx}`);
+      const icon = document.getElementById(`copyStopIcon_${idx}`);
+
+      if (btn && label && icon) {
+        btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+        btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+        icon.className = 'fa-solid fa-check text-[9px]';
+        label.innerText = 'Copied!';
+
+        setTimeout(() => {
+          btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+          btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-200');
+          icon.className = 'fa-regular fa-copy text-[9px]';
+          label.innerText = 'Copy';
+        }, 1500);
+      }
+      document.getElementById('statusText').innerText = `Copied ${hex} to clipboard!`;
+    }
+
+    // Render individual color stop rows
+    function renderColorStops() {
+      const container = document.getElementById('colorStopsContainer');
+      const canDelete = colorStops.length > 2;
+      const canAdd = colorStops.length < 6;
+
+      const addBtn = document.getElementById('addStopBtn');
+      if (addBtn) addBtn.style.display = canAdd ? 'inline-flex' : 'none';
+
+      container.innerHTML = colorStops.map((item, idx) => `
+        <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-xs">
+          <!-- Color input & hex badge -->
+          <div class="flex items-center gap-2 shrink-0">
+            <input 
+              type="color" 
+              value="${item.color}" 
+              oninput="handleColorChange(${idx}, this.value)"
+              class="w-7 h-7 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer bg-transparent"
+              title="Pick color"
+            >
+            <span class="font-mono font-bold text-[11px] text-slate-800 dark:text-slate-200 uppercase w-16">
+              ${item.color}
+            </span>
+          </div>
+
+          <!-- Position Range Slider -->
+          <div class="flex-1 flex items-center gap-1.5 px-1 min-w-[70px]">
+            <input 
+              type="range" 
+              min="0" 
+              max="100" 
+              value="${item.stop}" 
+              oninput="handleStopPercentChange(${idx}, this.value)"
+              class="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+            >
+            <span class="font-mono text-[10px] text-slate-500 dark:text-slate-400 w-7 text-right">${item.stop}%</span>
+          </div>
+
+          <!-- Dedicated Copy Button & Optional Delete -->
+          <div class="flex items-center gap-1 shrink-0">
+            <button 
+              type="button" 
+              id="copyStopBtn_${idx}"
+              onclick="copyStopColor('${item.color}', ${idx})" 
+              title="Copy ${item.color}"
+              class="py-1 px-2 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-mono font-semibold flex items-center gap-1 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer"
+            >
+              <i id="copyStopIcon_${idx}" class="fa-regular fa-copy text-[9px]"></i>
+              <span id="copyStopLabel_${idx}">Copy</span>
+            </button>
+
+            ${canDelete ? `
+              <button 
+                type="button" 
+                onclick="removeStopStop(${idx})" 
+                title="Remove Stop" 
+                class="w-6 h-6 rounded-md text-slate-400 hover:text-red-500 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
+              >
+                <i class="fa-solid fa-xmark text-[11px]"></i>
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Helper: Safe wrapper for remove
+    function removeStopStop(idx) {
+      removeColorStop(idx);
+    }
+
+    // Generate random gradient scheme
+    function generateRandomGradient() {
+      const types = ['linear', 'linear', 'radial', 'conic'];
+      gradientType = types[Math.floor(Math.random() * types.length)];
+      currentAngle = Math.floor(Math.random() * 36) * 10;
+      document.getElementById('angleRange').value = currentAngle;
+      document.getElementById('angleValueBadge').innerText = `${currentAngle}°`;
+
+      const numStops = Math.floor(Math.random() * 2) + 2; // 2 or 3 stops
+      colorStops = [];
+
+      for (let i = 0; i < numStops; i++) {
+        const hex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase();
+        const stopVal = Math.round((i / (numStops - 1)) * 100);
+        colorStops.push({ color: hex, stop: stopVal });
+      }
+
+      setGradientType(gradientType);
+    }
+
+    // Load Curated Presets
+    function loadPreset(name) {
+      if (name === 'sunset') {
+        gradientType = 'linear';
+        currentAngle = 135;
+        colorStops = [
+          { color: '#FF512F', stop: 0 },
+          { color: '#F09819', stop: 100 }
+        ];
+      } else if (name === 'ocean') {
+        gradientType = 'linear';
+        currentAngle = 180;
+        colorStops = [
+          { color: '#2B5876', stop: 0 },
+          { color: '#4E4376', stop: 100 }
+        ];
+      } else if (name === 'neon') {
+        gradientType = 'linear';
+        currentAngle = 90;
+        colorStops = [
+          { color: '#E11D48', stop: 0 },
+          { color: '#FB7185', stop: 50 },
+          { color: '#38BDF8', stop: 100 }
+        ];
+      } else if (name === 'emerald') {
+        gradientType = 'radial';
+        currentAngle = 0;
+        colorStops = [
+          { color: '#10B981', stop: 0 },
+          { color: '#064E3B', stop: 100 }
+        ];
+      }
+
+      document.getElementById('angleRange').value = currentAngle;
+      document.getElementById('angleValueBadge').innerText = `${currentAngle}°`;
+      setGradientType(gradientType);
+    }
+
+    // Clipboard copy helper using execCommand for sandbox iframe reliability
+    function copyTextToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.style.top = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(temp);
+    }
+
+    // Copy full CSS code
+    function copyCssCode() {
+      const code = document.getElementById('cssOutput').value;
+      if (!code.trim()) return;
+
+      copyTextToClipboard(code);
+      const copyText = document.getElementById('copyCssText');
+      const copyIcon = document.getElementById('copyCssIcon');
+
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        copyText.innerText = 'Copy CSS';
+        copyIcon.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied CSS code to clipboard!';
+    }
+
+    // Download CSS File
+    function downloadGradientCss() {
+      const cssVal = buildGradientCssValue();
+      const content = `/* Generated by FreeZip-Tools CSS Gradient Generator */\n.gradient-element {\n  background: ${cssVal};\n}\n`;
+
+      const blob = new Blob([content], { type: 'text/css;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gradient-${gradientType}.css`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = `Downloaded gradient-${gradientType}.css!`;
+    }
+
+    // Reset back to initial default
+    function resetAll() {
+      gradientType = 'linear';
+      currentAngle = 135;
+      colorStops = [
+        { color: '#E11D48', stop: 0 },
+        { color: '#F43F5E', stop: 50 },
+        { color: '#6366F1', stop: 100 }
+      ];
+
+      document.getElementById('angleRange').value = 135;
+      document.getElementById('angleValueBadge').innerText = '135°';
+      setGradientType('linear');
+      document.getElementById('statusText').innerText = 'Gradient reset to default';
+    }
+
+    // Theme Switcher Sync with localStorage
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+      updateGradientUI();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Favicon Maker — FreeZip-Tools (Minimalist)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- JSZip for Multi-Size Favicon Pack Download (.ico & .png) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    /* Color picker native styling */
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+    /* Range Slider Styling */
+    input[type="range"] {
+      accent-color: #E11D48;
+    }
+    /* Checkerboard backdrop for transparent icon preview */
+    .checkerboard-bg {
+      background-image: linear-gradient(45deg, #f1f5f9 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f1f5f9 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f1f5f9 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
+      background-size: 14px 14px;
+      background-position: 0 0, 0 7px, 7px -7px, -7px 0px;
+    }
+    .dark .checkerboard-bg {
+      background-image: linear-gradient(45deg, #1e293b 25%, transparent 25%), 
+                        linear-gradient(-45deg, #1e293b 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #1e293b 75%), 
+                        linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+      background-size: 14px 14px;
+      background-position: 0 0, 0 7px, 7px -7px, -7px 0px;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="https://www.freezip.site/" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="https://www.freezip.site/" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Favicon Maker
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Upload image or create custom emoji & text favicons
+            </p>
+          </div>
+
+          <!-- Hidden File Input for Image Upload -->
+          <input 
+            type="file" 
+            id="faviconFileInput" 
+            accept="image/*,.svg" 
+            class="hidden" 
+            onchange="handleImageUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD IMAGE (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('faviconFileInput').click()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+              <span>Upload Image / Logo for Favicon</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Interactive Favicon Studio Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3.5">
+            
+            <!-- Mode Switcher: Image Upload vs Text/Emoji Creator -->
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px] flex items-center gap-1.5">
+                <i class="fa-solid fa-sliders text-red-500 text-[10px]"></i>
+                <span>Creator Mode:</span>
+              </span>
+              <div class="flex items-center gap-1 font-mono text-[11px]">
+                <button type="button" onclick="setCreatorMode('image')" id="btnModeImage" class="px-2.5 py-1 rounded font-bold bg-[#E11D48] text-white transition-all">Image</button>
+                <button type="button" onclick="setCreatorMode('text')" id="btnModeText" class="px-2.5 py-1 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Emoji / Text</button>
+              </div>
+            </div>
+
+            <!-- Text / Emoji Mode Controls (Shown only in text mode) -->
+            <div id="textModeControls" class="hidden space-y-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-xs font-mono">
+              <div class="flex items-center gap-2">
+                <div class="flex-1 space-y-1">
+                  <label class="text-[10px] text-slate-500 block">Icon Character / Emoji:</label>
+                  <input 
+                    type="text" 
+                    id="textIconInput" 
+                    value="🚀" 
+                    maxlength="4" 
+                    oninput="handleTextIconChange(this.value)"
+                    placeholder="e.g. ⚡, ✦, F" 
+                    class="w-full px-2.5 py-1.5 text-center text-sm font-bold rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-red-500"
+                  >
+                </div>
+                <div class="space-y-1 shrink-0">
+                  <label class="text-[10px] text-slate-500 block">Text Color:</label>
+                  <div class="flex items-center gap-1">
+                    <input 
+                      type="color" 
+                      id="textColorPicker" 
+                      value="#FFFFFF" 
+                      oninput="handleTextColorChange(this.value)"
+                      class="w-8 h-8 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer bg-transparent"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Real-World Environment Simulations (Browser Tab & Search Result Mockups) -->
+            <div class="space-y-2 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[10px] block uppercase tracking-wider">
+                Live Environment Previews:
+              </span>
+
+              <!-- Mockup 1: Real Browser Tab Simulation -->
+              <div class="p-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                <div class="flex items-center gap-1.5 text-[9px] font-mono text-slate-400 px-1">
+                  <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                  <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="pl-1">Chrome / Safari Tab</span>
+                </div>
+                <!-- Browser Tab Pill -->
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs max-w-full">
+                  <canvas id="tabFaviconCanvas" width="16" height="16" class="w-4 h-4 shrink-0 rounded-xs"></canvas>
+                  <span class="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">My Website — Home</span>
+                  <span class="text-[10px] text-slate-400 hover:text-slate-600 ml-1">&times;</span>
+                </div>
+              </div>
+
+              <!-- Mockup 2: Google Search Snippet Simulation & Mobile Bookmark -->
+              <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                <!-- Search Result Snippet -->
+                <div class="p-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                  <span class="text-[9px] text-slate-400 block font-bold">Search Snippet</span>
+                  <div class="flex items-center gap-1.5">
+                    <canvas id="searchFaviconCanvas" width="24" height="24" class="w-5 h-5 shrink-0 rounded-full border border-slate-200 dark:border-slate-800"></canvas>
+                    <div class="overflow-hidden">
+                      <span class="text-[10px] text-slate-800 dark:text-slate-200 font-semibold block truncate leading-tight">MyBrand</span>
+                      <span class="text-[8px] text-slate-400 block truncate leading-none">example.com</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mobile Launcher Icon -->
+                <div class="p-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                  <span class="text-[9px] text-slate-400 block font-bold">Touch Icon</span>
+                  <div class="flex items-center gap-2">
+                    <canvas id="appFaviconCanvas" width="64" height="64" class="w-8 h-8 shrink-0 rounded-xl shadow-xs border border-slate-200 dark:border-slate-800"></canvas>
+                    <span class="text-[10px] text-slate-700 dark:text-slate-300 font-semibold truncate leading-tight">iOS / Android</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Favicon Customization Sliders (Background, Corner Radius, Padding) -->
+            <div class="space-y-2.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              
+              <!-- Background Color + Transparent Toggle + Dedicated Working Copy Button -->
+              <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-2">
+                <div class="flex items-center justify-between text-xs font-mono">
+                  <span class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">Background:</span>
+                  <button 
+                    type="button" 
+                    id="transparentToggleBtn" 
+                    onclick="toggleTransparent()"
+                    class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E11D48] text-white active:scale-95 transition-all"
+                  >
+                    Transparent
+                  </button>
+                </div>
+
+                <div id="bgColorRow" class="hidden flex items-center justify-between gap-2 text-xs font-mono pt-1 border-t border-slate-200 dark:border-slate-800">
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <input 
+                      type="color" 
+                      id="bgColorPicker" 
+                      value="#E11D48" 
+                      oninput="handleBgColorChange(this.value)"
+                      class="w-6 h-6 rounded-md border border-slate-300 dark:border-slate-700 cursor-pointer bg-transparent"
+                    >
+                    <span id="bgHexBadge" class="font-mono text-[11px] font-bold text-slate-700 dark:text-slate-300">#E11D48</span>
+                  </div>
+
+                  <!-- Dedicated Working Copy Button for Background HEX -->
+                  <button 
+                    type="button" 
+                    id="copyBgHexBtn"
+                    onclick="copyBgHex()"
+                    title="Copy background hex code"
+                    class="py-1 px-2 rounded-md bg-white hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-mono font-semibold flex items-center gap-1 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <i id="copyBgHexIcon" class="fa-regular fa-copy text-[9px]"></i>
+                    <span id="copyBgHexLabel">Copy BG Hex</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Corner Radius & Inner Margin (Padding) Sliders -->
+              <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div>
+                  <div class="flex items-center justify-between text-[11px] mb-1">
+                    <span class="text-slate-600 dark:text-slate-400">Radius:</span>
+                    <span id="valRadius" class="text-red-500 font-bold">20%</span>
+                  </div>
+                  <input type="range" id="rangeRadius" min="0" max="50" value="20" oninput="updateSetting('radius', this.value)" class="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                  <div class="flex items-center justify-between text-[11px] mb-1">
+                    <span class="text-slate-600 dark:text-slate-400">Padding:</span>
+                    <span id="valPadding" class="text-red-500 font-bold">10%</span>
+                  </div>
+                  <input type="range" id="rangePadding" min="0" max="40" value="10" oninput="updateSetting('padding', this.value)" class="w-full h-1 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                </div>
+              </div>
+
+            </div>
+
+            <!-- HTML Snippet Box with Dedicated 1-Tap Copy -->
+            <div class="space-y-1.5 border-t border-slate-200 dark:border-slate-800 pt-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700 dark:text-slate-300 font-mono text-[11px]">HTML &lt;head&gt; Code:</span>
+                <button 
+                  type="button" 
+                  id="copyHtmlBtn" 
+                  onclick="copyHtmlSnippet()" 
+                  class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1"
+                >
+                  <i id="copyHtmlIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyHtmlText">Copy HTML</span>
+                </button>
+              </div>
+
+              <textarea 
+                id="htmlOutput" 
+                rows="3" 
+                readonly 
+                class="w-full p-2 text-[10px] font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 focus:outline-none resize-none leading-relaxed"
+              ></textarea>
+            </div>
+
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadFaviconSuite()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download (.zip)</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side Favicon Maker
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- Offscreen High-Res Master Canvas for rendering sizes -->
+  <canvas id="masterFaviconCanvas" width="512" height="512" class="hidden"></canvas>
+
+  <!-- FAVICON MAKER JAVASCRIPT LOGIC -->
+  <script>
+    let creatorMode = 'image'; // 'image' or 'text'
+    let isTransparent = true;
+    let currentBgColor = '#E11D48';
+    let currentTextColor = '#FFFFFF';
+    let currentTextIcon = '🚀';
+    let currentRadius = 20; // in percent
+    let currentPadding = 10; // in percent
+    let sourceImage = null;
+
+    // Default SVG Shapes icon as initial graphic
+    const defaultSvgGraphic = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+        <rect x="5" y="5" width="90" height="90" rx="20" fill="#E11D48"/>
+        <polygon points="50,22 75,65 25,65" fill="#FFFFFF"/>
+        <circle cx="50" cy="52" r="9" fill="#E11D48"/>
+      </svg>
+    `;
+
+    // Load initial Graphic on start
+    function initDefaultGraphic() {
+      const img = new Image();
+      img.onload = () => {
+        sourceImage = img;
+        renderAllCanvases();
+        updateHtmlSnippet();
+      };
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(defaultSvgGraphic);
+    }
+
+    // Creator Mode Toggle (Image vs Text/Emoji)
+    function setCreatorMode(mode) {
+      creatorMode = mode;
+      const btnImage = document.getElementById('btnModeImage');
+      const btnText = document.getElementById('btnModeText');
+      const textControls = document.getElementById('textModeControls');
+
+      if (mode === 'image') {
+        btnImage.className = 'px-2.5 py-1 rounded font-bold bg-[#E11D48] text-white transition-all';
+        btnText.className = 'px-2.5 py-1 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+        textControls.classList.add('hidden');
+        if (!sourceImage) initDefaultGraphic();
+      } else {
+        btnText.className = 'px-2.5 py-1 rounded font-bold bg-[#E11D48] text-white transition-all';
+        btnImage.className = 'px-2.5 py-1 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+        textControls.classList.remove('hidden');
+        renderTextGraphic();
+      }
+      renderAllCanvases();
+    }
+
+    // Toggle Transparent Background
+    function toggleTransparent() {
+      isTransparent = !isTransparent;
+      const btn = document.getElementById('transparentToggleBtn');
+      const row = document.getElementById('bgColorRow');
+
+      if (isTransparent) {
+        btn.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E11D48] text-white active:scale-95 transition-all';
+        btn.innerText = 'Transparent';
+        row.classList.add('hidden');
+      } else {
+        btn.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 active:scale-95 transition-all';
+        btn.innerText = 'Solid Color';
+        row.classList.remove('hidden');
+      }
+
+      renderAllCanvases();
+    }
+
+    // Handle Custom Settings Sliders
+    function updateSetting(prop, val) {
+      if (prop === 'radius') {
+        currentRadius = parseInt(val, 10) || 0;
+        document.getElementById('valRadius').innerText = `${currentRadius}%`;
+      } else if (prop === 'padding') {
+        currentPadding = parseInt(val, 10) || 0;
+        document.getElementById('valPadding').innerText = `${currentPadding}%`;
+      }
+      renderAllCanvases();
+    }
+
+    // Handle Background Color Change
+    function handleBgColorChange(val) {
+      currentBgColor = val.toUpperCase();
+      document.getElementById('bgHexBadge').innerText = currentBgColor;
+      renderAllCanvases();
+    }
+
+    // Dedicated Working Copy Button for Background HEX
+    function copyBgHex() {
+      copyTextToClipboard(currentBgColor);
+
+      const btn = document.getElementById('copyBgHexBtn');
+      const label = document.getElementById('copyBgHexLabel');
+      const icon = document.getElementById('copyBgHexIcon');
+
+      btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+      btn.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-700', 'dark:text-slate-200');
+      icon.className = 'fa-solid fa-check text-[9px]';
+      label.innerText = 'Copied!';
+
+      setTimeout(() => {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+        btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-700', 'dark:text-slate-200');
+        icon.className = 'fa-regular fa-copy text-[9px]';
+        label.innerText = 'Copy BG Hex';
+      }, 1500);
+
+      document.getElementById('statusText').innerText = `Copied background ${currentBgColor}!`;
+    }
+
+    // Handle Text Icon / Emoji Changes
+    function handleTextIconChange(val) {
+      currentTextIcon = val || '⚡';
+      renderTextGraphic();
+    }
+
+    function handleTextColorChange(val) {
+      currentTextColor = val;
+      renderTextGraphic();
+    }
+
+    // Render Text / Emoji to in-memory source image
+    function renderTextGraphic() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+
+      ctx.clearRect(0, 0, 512, 512);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = currentTextColor;
+
+      // Check if character is emoji or alphabet
+      const isSingleChar = currentTextIcon.length <= 2;
+      ctx.font = isSingleChar ? '320px "Plus Jakarta Sans", sans-serif' : '220px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(currentTextIcon, 256, 270);
+
+      const img = new Image();
+      img.onload = () => {
+        sourceImage = img;
+        renderAllCanvases();
+      };
+      img.src = canvas.toDataURL('image/png');
+    }
+
+    // Draw Master Icon to specified canvas context
+    function drawFaviconToContext(ctx, width, height) {
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Draw Background (if solid color)
+      if (!isTransparent) {
+        ctx.fillStyle = currentBgColor;
+        const cornerPx = (currentRadius / 100) * (Math.min(width, height) / 2);
+
+        ctx.beginPath();
+        if (typeof ctx.roundRect === 'function') {
+          ctx.roundRect(0, 0, width, height, cornerPx);
+        } else {
+          // Fallback rounded rect
+          ctx.rect(0, 0, width, height);
+        }
+        ctx.fill();
+      }
+
+      // 2. Draw Source Image Graphic with Padding
+      if (sourceImage) {
+        const padPx = (currentPadding / 100) * Math.min(width, height);
+        const innerW = width - (padPx * 2);
+        const innerH = height - (padPx * 2);
+
+        // Maintain aspect ratio
+        const scale = Math.min(innerW / sourceImage.width, innerH / sourceImage.height);
+        const drawW = sourceImage.width * scale;
+        const drawH = sourceImage.height * scale;
+        const x = (width - drawW) / 2;
+        const y = (height - drawH) / 2;
+
+        ctx.drawImage(sourceImage, x, y, drawW, drawH);
+      }
+    }
+
+    // Render all preview canvases (Tab, Search snippet, App icon, and Master)
+    function renderAllCanvases() {
+      // 1. Master Canvas (512x512)
+      const masterCanvas = document.getElementById('masterFaviconCanvas');
+      const mCtx = masterCanvas.getContext('2d');
+      drawFaviconToContext(mCtx, 512, 512);
+
+      // 2. Tab Canvas (16x16)
+      const tabCanvas = document.getElementById('tabFaviconCanvas');
+      const tCtx = tabCanvas.getContext('2d');
+      drawFaviconToContext(tCtx, 16, 16);
+
+      // 3. Search Snippet Canvas (24x24)
+      const searchCanvas = document.getElementById('searchFaviconCanvas');
+      const sCtx = searchCanvas.getContext('2d');
+      drawFaviconToContext(sCtx, 24, 24);
+
+      // 4. App Launcher Canvas (64x64)
+      const appCanvas = document.getElementById('appFaviconCanvas');
+      const aCtx = appCanvas.getContext('2d');
+      drawFaviconToContext(aCtx, 64, 64);
+    }
+
+    // Update HTML <head> Snippet
+    function updateHtmlSnippet() {
+      const code = `<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">`;
+      document.getElementById('htmlOutput').value = code;
+    }
+
+    // 1. Upload User Image / Logo Handler
+    async function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('statusText');
+      status.innerText = `Loading ${file.name}...`;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          sourceImage = img;
+          setCreatorMode('image');
+          renderAllCanvases();
+          status.innerText = `Ready • ${file.name} loaded (${img.width}x${img.height})`;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    // Helper: Convert Canvas to PNG Blob
+    function getCanvasBlob(canvas) {
+      return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    }
+
+    // Helper: Build Genuine Windows ICO binary buffer containing PNG images
+    function createIcoFromPngBuffers(pngBuffers) {
+      // pngBuffers is array of { width, height, buffer }
+      const count = pngBuffers.length;
+      const headerLength = 6;
+      const dirEntryLength = 16;
+      const dirLength = dirEntryLength * count;
+
+      let currentOffset = headerLength + dirLength;
+      let totalLength = currentOffset;
+
+      for (const item of pngBuffers) {
+        totalLength += item.buffer.byteLength;
+      }
+
+      const icoBuffer = new ArrayBuffer(totalLength);
+      const view = new DataView(icoBuffer);
+
+      // ICO Header
+      view.setUint16(0, 0, true);     // Reserved
+      view.setUint16(2, 1, true);     // Image type: 1 = ICO
+      view.setUint16(4, count, true); // Number of images
+
+      // Directory Entries
+      let dirOffset = 6;
+      for (let i = 0; i < count; i++) {
+        const item = pngBuffers[i];
+        const size = item.buffer.byteLength;
+
+        view.setUint8(dirOffset + 0, item.width >= 256 ? 0 : item.width);   // Width
+        view.setUint8(dirOffset + 1, item.height >= 256 ? 0 : item.height); // Height
+        view.setUint8(dirOffset + 2, 0); // Palette count
+        view.setUint8(dirOffset + 3, 0); // Reserved
+        view.setUint16(dirOffset + 4, 1, true);  // Color planes
+        view.setUint16(dirOffset + 6, 32, true); // Bits per pixel
+        view.setUint32(dirOffset + 8, size, true); // Image data size in bytes
+        view.setUint32(dirOffset + 12, currentOffset, true); // Offset of data
+
+        // Copy PNG buffer to data offset
+        const icoBytes = new Uint8Array(icoBuffer, currentOffset, size);
+        icoBytes.set(new Uint8Array(item.buffer));
+
+        currentOffset += size;
+        dirOffset += dirEntryLength;
+      }
+
+      return icoBuffer;
+    }
+
+    // 2. Download Favicon Suite (.zip package with .ico, all PNG sizes, webmanifest)
+    async function downloadFaviconSuite() {
+      const downloadBtn = document.getElementById('downloadBtn');
+      const btnText = document.getElementById('downloadBtnText');
+      const status = document.getElementById('statusText');
+
+      try {
+        downloadBtn.disabled = true;
+        btnText.innerText = 'Packaging...';
+        status.innerText = 'Generating multi-size favicon bundle...';
+
+        const zip = new JSZip();
+
+        // Render sizes into offscreen canvases
+        const sizes = [16, 32, 48, 64, 180, 192, 512];
+        const renderedBlobs = {};
+        const icoInputs = [];
+
+        for (const size of sizes) {
+          const offCanvas = document.createElement('canvas');
+          offCanvas.width = size;
+          offCanvas.height = size;
+          const ctx = offCanvas.getContext('2d');
+          drawFaviconToContext(ctx, size, size);
+
+          const blob = await getCanvasBlob(offCanvas);
+          renderedBlobs[size] = blob;
+
+          const arrayBuffer = await blob.arrayBuffer();
+
+          // Standard Web PNG files
+          if (size === 16) zip.file('favicon-16x16.png', arrayBuffer);
+          if (size === 32) zip.file('favicon-32x32.png', arrayBuffer);
+          if (size === 48) zip.file('favicon-48x48.png', arrayBuffer);
+          if (size === 180) zip.file('apple-touch-icon.png', arrayBuffer);
+          if (size === 192) zip.file('android-chrome-192x192.png', arrayBuffer);
+          if (size === 512) zip.file('android-chrome-512x512.png', arrayBuffer);
+
+          // Add 16, 32, and 48 sizes to ICO container
+          if (size === 16 || size === 32 || size === 48) {
+            icoInputs.push({ width: size, height: size, buffer: arrayBuffer });
+          }
+        }
+
+        // Generate genuine multi-resolution Windows .ico file
+        const icoBuffer = createIcoFromPngBuffers(icoInputs);
+        zip.file('favicon.ico', icoBuffer);
+
+        // Add site.webmanifest
+        const webmanifest = {
+          name: "My Website",
+          short_name: "Website",
+          icons: [
+            { src: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+            { src: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" }
+          ],
+          theme_color: isTransparent ? "#ffffff" : currentBgColor,
+          background_color: isTransparent ? "#ffffff" : currentBgColor,
+          display: "standalone"
+        };
+        zip.file('site.webmanifest', JSON.stringify(webmanifest, null, 2));
+
+        // Add Readme instruction text
+        const instructions = `/* FreeZip-Tools Favicon Package Instructions */
+1. Upload all image files and site.webmanifest to the root directory of your website.
+2. Insert the following lines into the <head> section of your HTML pages:
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+`;
+        zip.file('instructions.txt', instructions);
+
+        // Download ZIP
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'favicon-package.zip';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        status.innerText = 'Downloaded favicon-package.zip!';
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Error generating favicon bundle.';
+      } finally {
+        downloadBtn.disabled = false;
+        btnText.innerText = 'Download (.zip)';
+      }
+    }
+
+    // Dedicated Working Copy Button for HTML Snippet
+    function copyHtmlSnippet() {
+      const code = document.getElementById('htmlOutput').value;
+      if (!code.trim()) return;
+
+      copyTextToClipboard(code);
+      const copyText = document.getElementById('copyHtmlText');
+      const copyIcon = document.getElementById('copyHtmlIcon');
+
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        copyText.innerText = 'Copy HTML';
+        copyIcon.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied <head> HTML tags to clipboard!';
+    }
+
+    // Universal copy helper
+    function copyTextToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.style.top = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(temp);
+    }
+
+    // 3. Reset All Handler
+    function resetAll() {
+      creatorMode = 'image';
+      isTransparent = true;
+      currentBgColor = '#E11D48';
+      currentTextColor = '#FFFFFF';
+      currentTextIcon = '🚀';
+      currentRadius = 20;
+      currentPadding = 10;
+
+      document.getElementById('rangeRadius').value = 20;
+      document.getElementById('valRadius').innerText = '20%';
+      document.getElementById('rangePadding').value = 10;
+      document.getElementById('valPadding').innerText = '10%';
+
+      const btn = document.getElementById('transparentToggleBtn');
+      btn.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E11D48] text-white active:scale-95 transition-all';
+      btn.innerText = 'Transparent';
+      document.getElementById('bgColorRow').classList.add('hidden');
+
+      document.getElementById('statusText').innerText = 'Favicon settings reset to default';
+      setCreatorMode('image');
+      initDefaultGraphic();
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+      initDefaultGraphic();
+      updateHtmlSnippet();
+    });
+  </script>
+</body>
+</html>

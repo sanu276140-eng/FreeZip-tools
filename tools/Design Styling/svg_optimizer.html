@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>SVG Optimizer — FreeZip</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    html, body {
+      overscroll-behavior-y: none;
+    }
+    .wireframe-container {
+      border-left: none;
+      border-right: none;
+    }
+    @media (min-width: 640px) {
+      .wireframe-container {
+        border-left: 1.5px solid rgba(203, 213, 225, 0.8);
+        border-right: 1.5px solid rgba(203, 213, 225, 0.8);
+      }
+      .dark .wireframe-container {
+        border-left: 1.5px solid rgba(51, 65, 85, 0.7);
+        border-right: 1.5px solid rgba(51, 65, 85, 0.7);
+      }
+    }
+    .safe-bottom {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    textarea {
+      tab-size: 2;
+    }
+    /* Checkerboard backdrop for transparent SVG preview */
+    .checkerboard-bg {
+      background-image: linear-gradient(45deg, #f1f5f9 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f1f5f9 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f1f5f9 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+    .dark .checkerboard-bg {
+      background-image: linear-gradient(45deg, #1e293b 25%, transparent 25%), 
+                        linear-gradient(-45deg, #1e293b 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #1e293b 75%), 
+                        linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+    #svgRenderStage svg {
+      max-width: 100%;
+      max-height: 100%;
+      height: auto;
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body class="bg-white sm:bg-slate-100/70 dark:bg-[#0D131F] sm:dark:bg-[#070b12] text-slate-800 dark:text-slate-100 min-h-[100dvh] font-sans transition-colors duration-200 antialiased flex flex-col overflow-x-hidden select-none">
+
+  <!-- MOBILE-FIRST OUTER WRAPPER -->
+  <div class="w-full max-w-[1140px] mx-auto px-0 sm:px-6 md:px-10 flex-1 flex flex-col">
+
+    <!-- MINIMAL WIREFRAME CONTAINER -->
+    <div class="wireframe-container bg-white dark:bg-[#0D131F] flex-1 flex flex-col justify-between sm:shadow-sm">
+
+      <!-- MOBILE-FIRST HEADER -->
+      <header class="border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 md:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sticky top-0 z-30 bg-white/95 dark:bg-[#0D131F]/95 backdrop-blur-md">
+        <a href="https://www.freezip.site/" class="flex items-center gap-2.5 font-bold tracking-tight text-slate-900 dark:text-white group">
+          <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs shadow-sm shadow-red-500/40 group-hover:rotate-6 transition-transform">
+            <i class="fa-solid fa-shapes"></i>
+          </span>
+          <span class="text-base font-extrabold uppercase tracking-wide">
+            Free<span class="text-red-500">Zip-Tools</span>
+          </span>
+        </a>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <a href="https://www.freezip.site/" class="h-10 px-3 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800/60 hover:text-red-500 active:scale-95 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left text-[11px]"></i>
+            <span>Home</span>
+          </a>
+          <button onclick="toggleTheme()" aria-label="Toggle Theme" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 active:scale-95 transition-all">
+            <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- MOBILE-FIRST MAIN WORKSPACE -->
+      <main class="flex-1 flex flex-col justify-center px-4 py-5 sm:p-8 md:p-12 w-full">
+        <div class="w-full max-w-md mx-auto border border-slate-200/90 dark:border-slate-800 rounded-2xl bg-slate-50/70 dark:bg-[#111827]/80 p-5 sm:p-7 text-center space-y-5 shadow-sm">
+
+          <!-- Website Logo & Brand Identity Badge -->
+          <div class="flex flex-col items-center justify-center gap-2 pt-1">
+            <a href="index.html" title="FreeZip-Tools Home" class="group flex flex-col items-center">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-500 text-white flex items-center justify-center shadow-lg shadow-red-500/25 ring-4 ring-red-500/10 dark:ring-red-500/20 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-200">
+                <i class="fa-solid fa-shapes text-2xl"></i>
+              </div>
+            </a>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-50 dark:bg-red-950/50 border border-red-200/70 dark:border-red-900/50 text-[11px] font-mono font-bold text-red-600 dark:text-red-400">
+              <i class="fa-solid fa-shapes text-[10px]"></i>
+              <span>FREE<span class="text-red-500">ZIP-TOOLS</span></span>
+            </div>
+          </div>
+
+          <!-- Title & Live Status -->
+          <div class="space-y-1">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              SVG Optimizer
+            </h1>
+            <p id="statusText" class="text-xs font-mono text-slate-500 dark:text-slate-400 break-words">
+              Strip metadata, clean coordinates & compress SVG paths
+            </p>
+          </div>
+
+          <!-- Hidden File Input -->
+          <input 
+            type="file" 
+            id="svgFileInput" 
+            accept=".svg,image/svg+xml" 
+            class="hidden" 
+            onchange="handleSvgUpload(event)"
+          >
+
+          <!-- 1. MAIN BUTTON: UPLOAD SVG (Fixed Brand Red #E11D48, 54px Mobile Thumb Size) -->
+          <div>
+            <button 
+              type="button"
+              onclick="document.getElementById('svgFileInput').click()"
+              class="w-full min-h-[54px] py-3.5 px-5 rounded-xl bg-[#E11D48] hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-base shadow-md shadow-rose-500/25 flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-bezier-curve text-lg"></i>
+              <span>Upload SVG File</span>
+            </button>
+          </div>
+
+          <!-- Minimalist Interactive SVG Studio Area -->
+          <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white/70 dark:bg-slate-900/60 p-3 text-left space-y-3.5">
+            
+            <!-- Live SVG Visual Preview Box -->
+            <div class="relative w-full h-36 sm:h-40 rounded-xl border border-slate-200 dark:border-slate-800 checkerboard-bg flex items-center justify-center p-3 overflow-hidden transition-all duration-200">
+              <div id="svgRenderStage" class="w-full h-full flex items-center justify-center">
+                <span class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-image text-xs"></i>
+                  <span>No SVG loaded</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Optimizer Mode Pills & Precision Options -->
+            <div class="flex items-center justify-between text-xs flex-wrap gap-1">
+              <div class="flex items-center gap-1 font-mono text-[11px]">
+                <button type="button" onclick="setMode('safe')" id="modeSafeBtn" class="px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all">Safe</button>
+                <button type="button" onclick="setMode('aggressive')" id="modeAggrBtn" class="px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Max</button>
+                <button type="button" onclick="setMode('beautify')" id="modeBeautBtn" class="px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all">Beautify</button>
+              </div>
+
+              <!-- Quick Sample & Copy Helper -->
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="loadSampleSvg()" class="text-[10px] font-mono font-semibold text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                  Sample
+                </button>
+                <button type="button" onclick="copyOptimizedSvg()" id="copyBtn" class="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1">
+                  <i id="copyBtnIcon" class="fa-regular fa-copy text-[10px]"></i>
+                  <span id="copyBtnText">Copy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- SVG Code Editor / Text Area -->
+            <div class="relative">
+              <textarea 
+                id="svgEditor"
+                rows="6"
+                oninput="handleEditorInput(this.value)"
+                placeholder="Paste raw SVG markup here or click 'Upload SVG File'..."
+                class="w-full p-2.5 text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-red-500 transition-colors resize-y leading-relaxed"
+                spellcheck="false"
+              ></textarea>
+            </div>
+
+            <!-- Live Validation & Reduction Metrics Badge -->
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span id="validationBadge" class="text-slate-400">Waiting for SVG input...</span>
+              <span id="savingsDisplay" class="text-slate-400 font-semibold">0 bytes</span>
+            </div>
+
+          </div>
+
+          <!-- 2 & 3. ACTION BUTTONS: DOWNLOAD & RESET (2-Column Thumb Grid) -->
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3 pt-1">
+            <button 
+              id="downloadBtn"
+              type="button"
+              onclick="downloadSvgFile()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              <i class="fa-solid fa-download text-xs"></i>
+              <span id="downloadBtnText">Download SVG</span>
+            </button>
+
+            <button 
+              id="resetBtn"
+              type="button"
+              onclick="resetAll()"
+              disabled
+              class="w-full min-h-[48px] py-3 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+            >
+              <i class="fa-solid fa-rotate-left text-xs"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- MOBILE SAFE-AREA FOOTER -->
+      <footer class="safe-bottom border-t border-slate-200 dark:border-slate-800 px-4 pt-3 text-center text-[11px] font-mono text-slate-400">
+        FreeZip-Tools &bull; 100% Client-Side SVG Optimizer
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- SVG OPTIMIZER JAVASCRIPT LOGIC -->
+  <script>
+    let activeMode = 'safe'; // 'safe', 'aggressive', 'beautify'
+    let rawSvg = '';
+    let optimizedSvg = '';
+    let originalFileName = 'vector.svg';
+
+    // Mode Selector Pills (Safe, Max/Aggressive, Beautify)
+    function setMode(mode) {
+      activeMode = mode;
+      const bSafe = document.getElementById('modeSafeBtn');
+      const bAggr = document.getElementById('modeAggrBtn');
+      const bBeaut = document.getElementById('modeBeautBtn');
+
+      [bSafe, bAggr, bBeaut].forEach(b => {
+        b.className = 'px-2 py-0.5 rounded font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all';
+      });
+
+      if (mode === 'safe') {
+        bSafe.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      } else if (mode === 'aggressive') {
+        bAggr.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      } else {
+        bBeaut.className = 'px-2 py-0.5 rounded font-bold bg-[#E11D48] text-white transition-all';
+      }
+
+      if (rawSvg.trim()) {
+        runOptimizer(rawSvg);
+      }
+    }
+
+    // Helper: Format byte counts cleanly
+    function formatBytes(bytes) {
+      if (!bytes || bytes <= 0) return '0 B';
+      if (bytes < 1024) return bytes + ' B';
+      return (bytes / 1024).toFixed(2) + ' KB';
+    }
+
+    // Coordinate Rounding Engine for SVG Path Data ('d' attribute)
+    function roundPathCoordinates(pathStr, precision = 2) {
+      return pathStr.replace(/(-?\d+\.\d+)/g, (match) => {
+        const num = parseFloat(match);
+        return Number(num.toFixed(precision)).toString();
+      });
+    }
+
+    // In-browser Client-Side SVG Optimization Engine
+    function optimizeSvgString(svgText, mode) {
+      if (!svgText.trim()) return '';
+
+      // 1. Strip XML declaration, doctype, and editor comments
+      let clean = svgText
+        .replace(/<\?xml[\s\S]*?\?>/gi, '')
+        .replace(/<!DOCTYPE[\s\S]*?>/gi, '')
+        .replace(/<!--[\s\S]*?-->/g, '');
+
+      // 2. Parse SVG through DOMParser for safe node cleaning
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(clean, 'image/svg+xml');
+
+        // Check for XML parse errors
+        const parseError = doc.querySelector('parsererror');
+        if (parseError) {
+          throw new Error('Malformed SVG syntax');
+        }
+
+        const svgEl = doc.querySelector('svg');
+        if (!svgEl) throw new Error('No <svg> root element found');
+
+        // Strip non-standard editor namespace attributes and metadata tags
+        const unwantedTags = doc.querySelectorAll('metadata, desc, sodipodi\\:namedview');
+        unwantedTags.forEach(node => node.remove());
+
+        if (mode === 'aggressive') {
+          // In aggressive mode, also remove titles
+          const titles = doc.querySelectorAll('title');
+          titles.forEach(node => node.remove());
+        }
+
+        // Recursive clean of elements
+        const allElements = doc.querySelectorAll('*');
+        allElements.forEach(el => {
+          // Remove editor specific attributes (Inkscape, Illustrator, Sketch, Figma)
+          const attrs = Array.from(el.attributes);
+          attrs.forEach(attr => {
+            const name = attr.name.toLowerCase();
+            if (
+              name.startsWith('inkscape:') || 
+              name.startsWith('sodipodi:') || 
+              name.startsWith('sketch:') || 
+              name.startsWith('adobe:') || 
+              name.startsWith('data-name') ||
+              name === 'xmlns:inkscape' || 
+              name === 'xmlns:sodipodi' || 
+              name === 'xmlns:sketch' || 
+              name === 'xmlns:adobe'
+            ) {
+              el.removeAttribute(attr.name);
+            }
+
+            // Remove empty style or class attributes
+            if ((name === 'style' || name === 'class') && !attr.value.trim()) {
+              el.removeAttribute(attr.name);
+            }
+
+            // Round path coordinate precision
+            if (name === 'd') {
+              const precision = mode === 'aggressive' ? 1 : 2;
+              el.setAttribute('d', roundPathCoordinates(attr.value, precision));
+            }
+          });
+
+          // Remove empty groups <g></g>
+          if (el.tagName.toLowerCase() === 'g' && el.children.length === 0 && !el.textContent.trim()) {
+            el.remove();
+          }
+        });
+
+        // Serialize cleaned XML document back to string
+        const serializer = new XMLSerializer();
+        clean = serializer.serializeToString(svgEl);
+
+      } catch (err) {
+        // Fallback to regex-only cleaning if DOMParser throws
+        clean = clean
+          .replace(/<\?xml[\s\S]*?\?>/gi, '')
+          .replace(/<!DOCTYPE[\s\S]*?>/gi, '')
+          .replace(/<!--[\s\S]*?-->/g, '');
+      }
+
+      // Mode 1: Safe Minify (strip inter-tag whitespace and comments)
+      if (mode === 'safe') {
+        return clean
+          .replace(/>\s+</g, '><')
+          .replace(/\s{2,}/g, ' ')
+          .trim();
+      }
+
+      // Mode 2: Aggressive / Max Minify (strip all superfluous spaces & collapse colors)
+      if (mode === 'aggressive') {
+        return clean
+          .replace(/>\s+</g, '><')
+          .replace(/\n|\r|\t/g, '')
+          .replace(/\s{2,}/g, ' ')
+          .replace(/#([0-9a-fA-F])\1([0-9a-fA-F])\2([0-9a-fA-F])\3\b/g, '#$1$2$3') // Shorten hex
+          .trim();
+      }
+
+      // Mode 3: Beautify / Pretty-Print SVG
+      if (mode === 'beautify') {
+        let formatted = '';
+        let indent = '';
+        const tab = '  ';
+
+        const raw = clean.replace(/>\s*</g, '>\n<').trim();
+        const lines = raw.split('\n');
+
+        for (let i = 0; i < lines.length; i++) {
+          let line = lines[i].trim();
+          if (!line) continue;
+
+          // Decrement indent for closing tags
+          if (line.match(/^<\/\w/)) {
+            indent = indent.substring(tab.length);
+          }
+
+          formatted += indent + line + '\n';
+
+          // Increment indent for opening tags (excluding self-closing tags)
+          if (line.match(/^<[^\/]/) && !line.match(/\/>$/) && !line.match(/<\/[^>]+>$/)) {
+            indent += tab;
+          }
+        }
+        return formatted.trim();
+      }
+
+      return clean;
+    }
+
+    // Execute Optimizer and Render Results
+    function runOptimizer(input) {
+      const statusText = document.getElementById('statusText');
+      const validationBadge = document.getElementById('validationBadge');
+      const savingsDisplay = document.getElementById('savingsDisplay');
+      const renderStage = document.getElementById('svgRenderStage');
+      const editor = document.getElementById('svgEditor');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const resetBtn = document.getElementById('resetBtn');
+
+      if (!input.trim()) {
+        resetAll();
+        return;
+      }
+
+      resetBtn.disabled = false;
+
+      try {
+        optimizedSvg = optimizeSvgString(input, activeMode);
+        editor.value = optimizedSvg;
+
+        // Render live preview safely
+        renderStage.innerHTML = optimizedSvg;
+
+        const origBytes = new Blob([input]).size;
+        const optBytes = new Blob([optimizedSvg]).size;
+
+        if (optBytes < origBytes) {
+          const savedBytes = origBytes - optBytes;
+          const pct = Math.round((savedBytes / origBytes) * 100);
+          savingsDisplay.innerText = `${formatBytes(optBytes)} (${pct}% smaller)`;
+          validationBadge.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Saved ${formatBytes(savedBytes)} (${pct}%)</span>`;
+          statusText.innerText = `Optimized • Reduced by ${pct}% (${formatBytes(origBytes)} → ${formatBytes(optBytes)})`;
+        } else {
+          savingsDisplay.innerText = `${formatBytes(optBytes)}`;
+          validationBadge.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Valid SVG</span>`;
+          statusText.innerText = `SVG ready (${formatBytes(optBytes)})`;
+        }
+
+        downloadBtn.disabled = false;
+      } catch (err) {
+        renderStage.innerHTML = `<span class="text-red-500 font-mono text-xs flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> Invalid SVG</span>`;
+        validationBadge.innerHTML = `<span class="text-red-500 font-bold"><i class="fa-solid fa-circle-xmark mr-1"></i>Parsing Error</span>`;
+        statusText.innerText = 'Error parsing SVG markup';
+        downloadBtn.disabled = true;
+      }
+    }
+
+    // Handle Direct Typing or Pasting in Editor
+    function handleEditorInput(val) {
+      rawSvg = val;
+      runOptimizer(val);
+    }
+
+    // 1. Upload SVG File Handler
+    async function handleSvgUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusText = document.getElementById('statusText');
+      statusText.innerText = `Reading ${file.name}...`;
+
+      try {
+        const text = await file.text();
+        rawSvg = text;
+        originalFileName = file.name.endsWith('.svg') ? file.name : `${file.name}.svg`;
+        runOptimizer(text);
+      } catch (err) {
+        console.error(err);
+        statusText.innerText = 'Could not read SVG file.';
+      }
+
+      event.target.value = '';
+    }
+
+    // Quick Test Sample SVG with metadata, comments, and redundant spaces
+    function loadSampleSvg() {
+      const sample = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- FreeZip-Tools Sample Vector with Inkscape & Illustrator Metadata -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" viewBox="0 0 100 100" width="100" height="100">
+  <metadata>
+    <creator>FreeZip-Tools Generator</creator>
+    <date>2026-11-05</date>
+  </metadata>
+  <g inkscape:groupmode="layer" id="layer1">
+    <!-- Outer Brand Rounded Card -->
+    <rect x="5.12345" y="5.98765" width="89.87654" height="88.01234" rx="20.45678" fill="#e11d48" style="fill: #e11d48; opacity: 1;" />
+    <!-- Center Shapes Emblem -->
+    <polygon points="50.1234,22.4567 74.8901,65.2345 25.3456,65.2345" fill="#ffffff" />
+    <circle cx="50.0000" cy="52.5432" r="8.7654" fill="#e11d48" />
+  </g>
+</svg>`;
+
+      rawSvg = sample;
+      originalFileName = 'sample-shapes.svg';
+      runOptimizer(sample);
+    }
+
+    // Copy to Clipboard (using document.execCommand for sandbox iframe reliability)
+    function copyOptimizedSvg() {
+      const editor = document.getElementById('svgEditor');
+      if (!editor.value.trim()) return;
+
+      copyTextToClipboard(editor.value);
+      const copyBtnText = document.getElementById('copyBtnText');
+      const copyBtnIcon = document.getElementById('copyBtnIcon');
+
+      copyBtnText.innerText = 'Copied!';
+      copyBtnIcon.className = 'fa-solid fa-check text-[10px] text-emerald-500';
+
+      setTimeout(() => {
+        copyBtnText.innerText = 'Copy';
+        copyBtnIcon.className = 'fa-regular fa-copy text-[10px]';
+      }, 1800);
+
+      document.getElementById('statusText').innerText = 'Copied optimized SVG markup to clipboard!';
+    }
+
+    // Universal copy helper
+    function copyTextToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.style.position = 'fixed';
+      temp.style.left = '-9999px';
+      temp.style.top = '0';
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        console.error('Copy failed');
+      }
+      document.body.removeChild(temp);
+    }
+
+    // 2. Download Optimized SVG File
+    function downloadSvgFile() {
+      const editor = document.getElementById('svgEditor');
+      const content = editor.value;
+      if (!content.trim()) return;
+
+      const blob = new Blob([content], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      const suffix = activeMode === 'beautify' ? '-beautified.svg' : '-opt.svg';
+      a.download = originalFileName.replace(/\.svg$/i, '') + suffix;
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      document.getElementById('statusText').innerText = `Downloaded ${a.download}!`;
+    }
+
+    // 3. Reset Handler
+    function resetAll() {
+      rawSvg = '';
+      optimizedSvg = '';
+      originalFileName = 'vector.svg';
+
+      document.getElementById('svgEditor').value = '';
+      document.getElementById('svgRenderStage').innerHTML = `
+        <span class="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-image text-xs"></i>
+          <span>No SVG loaded</span>
+        </span>
+      `;
+      document.getElementById('statusText').innerText = 'Strip metadata, clean coordinates & compress SVG paths';
+      document.getElementById('validationBadge').innerText = 'Waiting for SVG input...';
+      document.getElementById('validationBadge').className = 'text-slate-400';
+      document.getElementById('savingsDisplay').innerText = '0 bytes';
+      document.getElementById('downloadBtn').disabled = true;
+      document.getElementById('resetBtn').disabled = true;
+      setMode('safe');
+    }
+
+    // Minimal Theme Switcher (Syncs with localStorage)
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const icon = document.getElementById('themeIcon');
+      icon.className = isDark ? 'fa-solid fa-sun text-xs text-amber-400' : 'fa-solid fa-moon text-xs';
+      localStorage.setItem('freezip_theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('freezip_theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').className = 'fa-solid fa-sun text-xs text-amber-400';
+      }
+    });
+  </script>
+</body>
+</html>
